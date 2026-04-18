@@ -11,14 +11,11 @@ const DashboardPage = () => {
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement | null>(null)
 
-  const accept = useMemo(
-    () => ['image/*'].join(','),
-    [],
-  )
+  const accept = useMemo(() => ['image/*'].join(','), [])
 
   const { homeHero, homePrivacyHeading, privacyTips, photoSelection } = useMemo(
     () => getHomeCopy(DEFAULT_HOME_LOCALE),
-    [],
+    []
   )
 
   const handleChoose = useCallback(() => {
@@ -72,7 +69,7 @@ const DashboardPage = () => {
         }
       }
     },
-    [navigate, photoSelection],
+    [navigate, photoSelection]
   )
 
   return (
@@ -90,7 +87,7 @@ const DashboardPage = () => {
             type="file"
             accept={accept}
             multiple
-            onChange={(e) => {
+            onChange={e => {
               handleFiles(e.currentTarget.files)
               e.currentTarget.value = ''
             }}

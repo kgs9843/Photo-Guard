@@ -13,7 +13,8 @@ const openDb = (): Promise<IDBDatabase> =>
   new Promise((resolve, reject) => {
     try {
       const req = indexedDB.open(DB_NAME, DB_VERSION)
-      req.onerror = () => reject(req.error ?? new Error('indexedDB open failed'))
+      req.onerror = () =>
+        reject(req.error ?? new Error('indexedDB open failed'))
       req.onsuccess = () => resolve(req.result)
       req.onupgradeneeded = () => {
         const db = req.result
@@ -27,7 +28,7 @@ const openDb = (): Promise<IDBDatabase> =>
   })
 
 export const putCleanedRecord = async (
-  record: CleanedHistoryRecordStored,
+  record: CleanedHistoryRecordStored
 ): Promise<void> => {
   const db = await openDb()
   await new Promise<void>((resolve, reject) => {
@@ -51,14 +52,14 @@ export const getAllCleanedRecords = async (): Promise<
       req.onsuccess = () =>
         resolve((req.result as CleanedHistoryRecordStored[]) ?? [])
       req.onerror = () => reject(req.error ?? new Error('getAll failed'))
-    },
+    }
   )
   db.close()
   return rows.sort((a, b) => b.createdAt - a.createdAt)
 }
 
 export const getCleanedRecordById = async (
-  id: string,
+  id: string
 ): Promise<CleanedHistoryRecordStored | undefined> => {
   const db = await openDb()
   const row = await new Promise<CleanedHistoryRecordStored | undefined>(
@@ -68,7 +69,7 @@ export const getCleanedRecordById = async (
       req.onsuccess = () =>
         resolve(req.result as CleanedHistoryRecordStored | undefined)
       req.onerror = () => reject(req.error ?? new Error('get failed'))
-    },
+    }
   )
   db.close()
   return row

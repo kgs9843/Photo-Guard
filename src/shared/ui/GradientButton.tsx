@@ -24,7 +24,7 @@ const GradientButton = ({
       aria-label={ariaLabel}
       disabled={disabled}
       className={[
-        'from-primary to-primary-container w-full rounded-[1.5rem] bg-linear-to-br py-5 text-lg font-bold text-white shadow-2xl shadow-primary/40 transition-all duration-200 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100',
+        'from-primary to-primary-container shadow-primary/40 w-full rounded-[1.5rem] bg-linear-to-br py-5 text-lg font-bold text-white shadow-2xl transition-all duration-200 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100',
         className ?? '',
       ].join(' ')}
     >
@@ -34,4 +34,3 @@ const GradientButton = ({
 }
 
 export default GradientButton
-

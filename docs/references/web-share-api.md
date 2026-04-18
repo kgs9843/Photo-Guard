@@ -4,6 +4,6 @@
 - MDN (sharing files): https://developer.mozilla.org/en-US/docs/Web/API/Navigator/canShare
 
 Notes:
+
 - `navigator.share()` availability depends on browser/device context (typically mobile).
 - File sharing requires secure context (HTTPS) and support for `files` in the share payload.
-

@@ -85,7 +85,7 @@ const hasVisibleCleanMetadata = (m: PhotoMetadata) => {
 const canDeleteMetadataFromCleanPage = (
   isLoading: boolean,
   metas: PhotoMetadata[] | null,
-  isMulti: boolean,
+  isMulti: boolean
 ) => {
   if (isLoading) return false
   if (!metas || metas.length === 0) return false
@@ -371,7 +371,7 @@ const CleanPage = () => {
   const canDeleteMetadata = canDeleteMetadataFromCleanPage(
     isLoading,
     metas,
-    isMulti,
+    isMulti
   )
 
   if (!first) {

@@ -111,14 +111,14 @@ const ClearHistoryConfirmModal = ({
           <div className="flex w-full flex-col gap-3">
             <button
               type="button"
-              className="bg-tertiary text-on-tertiary active:scale-[0.98] w-full rounded-xl px-6 py-4 text-[1rem] font-bold shadow-sm transition-all duration-200"
+              className="bg-tertiary text-on-tertiary w-full rounded-xl px-6 py-4 text-[1rem] font-bold shadow-sm transition-all duration-200 active:scale-[0.98]"
               onClick={handleConfirm}
             >
               {clearHistoryModal.delete}
             </button>
             <button
               type="button"
-              className="bg-surface-container-high text-on-secondary-container active:scale-[0.98] w-full rounded-xl px-6 py-4 text-[1rem] font-semibold transition-all duration-200"
+              className="bg-surface-container-high text-on-secondary-container w-full rounded-xl px-6 py-4 text-[1rem] font-semibold transition-all duration-200 active:scale-[0.98]"
               onClick={() => {
                 try {
                   onClose()
@@ -133,7 +133,7 @@ const ClearHistoryConfirmModal = ({
         </div>
       </div>
     </div>,
-    document.body,
+    document.body
   )
 }
 

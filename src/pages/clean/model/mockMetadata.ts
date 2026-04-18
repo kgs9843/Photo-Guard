@@ -36,4 +36,3 @@ export const cleanMetadataItemsMock: CleanMetadataItem[] = [
     severity: 'neutral',
   },
 ]
-

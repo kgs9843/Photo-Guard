@@ -21,7 +21,7 @@ const PrivacyPolicyPage = () => {
           </button>
         }
         title={
-          <h1 className="text-on-surface max-w-full wrap-break-word font-['Manrope',sans-serif] text-base font-semibold tracking-tight text-pretty sm:text-lg">
+          <h1 className="text-on-surface max-w-full font-['Manrope',sans-serif] text-base font-semibold tracking-tight text-pretty wrap-break-word sm:text-lg">
             {privacyCopy.topBarTitle}
           </h1>
         }

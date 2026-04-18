@@ -103,10 +103,8 @@ const CleaningPage = () => {
         try {
           const meta = await extractPhotoMetadata(photo)
           if (cancelled || runId !== cleaningRunIdRef.current) return
-          const { removed, lines, otherTagDetails } = await buildRemovalEvidence(
-            photo.file,
-            meta,
-          )
+          const { removed, lines, otherTagDetails } =
+            await buildRemovalEvidence(photo.file, meta)
           if (cancelled || runId !== cleaningRunIdRef.current) return
           const cleaned = await stripImageMetadata(photo.file, {
             outputMime: outputMime,

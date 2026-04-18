@@ -16,4 +16,3 @@ export type CleaningProgress = {
   percent: number
   statusText: string
 }
-

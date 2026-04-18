@@ -296,19 +296,19 @@ const HistoryDetailPage = () => {
                   </p>
                 ) : null}
                 <dl className="mt-4 max-h-80 space-y-3 overflow-y-auto pr-1">
-                {record.otherTagDetails.map(row => (
-                  <div
-                    key={row.key}
-                    className="border-outline-variant/10 grid gap-1 border-b border-dotted pb-3 last:border-0 last:pb-0 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)] sm:gap-x-4"
-                  >
-                    <dt className="text-on-surface font-mono text-xs font-semibold break-all">
-                      {row.key}
-                    </dt>
-                    <dd className="text-on-surface-variant text-xs leading-relaxed wrap-break-word">
-                      {row.valuePreview}
-                    </dd>
-                  </div>
-                ))}
+                  {record.otherTagDetails.map(row => (
+                    <div
+                      key={row.key}
+                      className="border-outline-variant/10 grid gap-1 border-b border-dotted pb-3 last:border-0 last:pb-0 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)] sm:gap-x-4"
+                    >
+                      <dt className="text-on-surface font-mono text-xs font-semibold break-all">
+                        {row.key}
+                      </dt>
+                      <dd className="text-on-surface-variant text-xs leading-relaxed wrap-break-word">
+                        {row.valuePreview}
+                      </dd>
+                    </div>
+                  ))}
                 </dl>
               </>
             ) : (

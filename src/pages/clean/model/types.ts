@@ -39,4 +39,3 @@ export type CleanMetadataItem = {
   severity?: 'warning' | 'neutral'
   kind: 'gps' | 'device' | 'datetime' | 'camera'
 }
-

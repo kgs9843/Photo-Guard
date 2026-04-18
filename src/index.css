@@ -82,7 +82,11 @@
   }
 
   .success-gradient {
-    background: radial-gradient(circle at center, var(--color-primary-fixed) 0%, var(--color-surface) 100%);
+    background: radial-gradient(
+      circle at center,
+      var(--color-primary-fixed) 0%,
+      var(--color-surface) 100%
+    );
   }
 
   .animate-pulse-subtle {

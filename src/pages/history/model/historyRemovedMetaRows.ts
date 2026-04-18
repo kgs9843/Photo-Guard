@@ -10,10 +10,9 @@ export type RemovedMetaRowDef = {
   Icon: LucideIcon
   title: string
   /** null이면 `otherCount`로 판별 */
-  removedFlag: keyof Pick<
-    HistoryRecordRemovedMeta,
-    'gps' | 'device' | 'captureTime'
-  > | null
+  removedFlag:
+    | keyof Pick<HistoryRecordRemovedMeta, 'gps' | 'device' | 'captureTime'>
+    | null
 }
 
 export const removedMetaRowDefs: RemovedMetaRowDef[] = [

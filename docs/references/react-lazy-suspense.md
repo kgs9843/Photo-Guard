@@ -4,5 +4,5 @@
 - React: `Suspense` — https://react.dev/reference/react/Suspense
 
 Notes:
-- Use `Suspense` fallback around route elements to show a consistent loading UI.
 
+- Use `Suspense` fallback around route elements to show a consistent loading UI.

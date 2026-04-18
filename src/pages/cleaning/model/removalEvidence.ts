@@ -49,7 +49,7 @@ const formatExifValue = (v: unknown): string => {
 }
 
 const collectOtherTagDetails = (
-  parsed: Record<string, unknown> | null,
+  parsed: Record<string, unknown> | null
 ): OtherMetaTagDetail[] => {
   if (!parsed || typeof parsed !== 'object') return []
   const keys = Object.keys(parsed)
@@ -67,7 +67,7 @@ const collectOtherTagDetails = (
 
 export const buildRemovalEvidence = async (
   file: File,
-  meta: PhotoMetadata,
+  meta: PhotoMetadata
 ): Promise<{
   removed: HistoryRecordRemovedMeta
   lines: string[]
@@ -83,13 +83,15 @@ export const buildRemovalEvidence = async (
 
   if (gps) {
     lines.push(
-      `위치(GPS): ${meta.latitude!.toFixed(4)}, ${meta.longitude!.toFixed(4)}`,
+      `위치(GPS): ${meta.latitude!.toFixed(4)}, ${meta.longitude!.toFixed(4)}`
     )
   }
 
   const device = Boolean(meta.make || meta.model)
   if (device) {
-    lines.push(`기기·모델: ${[meta.make, meta.model].filter(Boolean).join(' ')}`)
+    lines.push(
+      `기기·모델: ${[meta.make, meta.model].filter(Boolean).join(' ')}`
+    )
   }
 
   const captureTime = Boolean(meta.createdAt)
@@ -128,7 +130,7 @@ export const buildRemovalEvidence = async (
 
   const otherTagDetails = collectOtherTagDetails(parsedFull)
   const otherCount = Object.keys(parsedFull ?? {}).filter(
-    k => !ATTRIBUTED_KEYS.has(k),
+    k => !ATTRIBUTED_KEYS.has(k)
   ).length
 
   const removed: HistoryRecordRemovedMeta = {

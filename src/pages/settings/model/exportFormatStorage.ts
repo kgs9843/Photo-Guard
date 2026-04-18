@@ -25,6 +25,5 @@ export const setExportFormat = (format: ExportFormatKey): void => {
 }
 
 export const exportFormatMime = (
-  format: ExportFormatKey,
-): 'image/jpeg' | 'image/png' =>
-  format === 'png' ? 'image/png' : 'image/jpeg'
+  format: ExportFormatKey
+): 'image/jpeg' | 'image/png' => (format === 'png' ? 'image/png' : 'image/jpeg')

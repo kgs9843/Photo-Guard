@@ -19,4 +19,3 @@ const RouteFallback = () => {
 }
 
 export default RouteFallback
-

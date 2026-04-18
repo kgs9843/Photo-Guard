@@ -45,4 +45,3 @@ const OnlineBoundary = ({ children }: OnlineBoundaryProps) => {
 }
 
 export default OnlineBoundary
-

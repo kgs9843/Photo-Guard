@@ -6,7 +6,11 @@ const ScrollToTop = () => {
 
   useEffect(() => {
     try {
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' as ScrollBehavior })
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'instant' as ScrollBehavior,
+      })
     } catch {
       try {
         window.scrollTo(0, 0)
@@ -20,4 +24,3 @@ const ScrollToTop = () => {
 }
 
 export default ScrollToTop
-

@@ -29,13 +29,13 @@ const tags = [
 ] as const
 
 export const extractPhotoMetadata = async (
-  photo: SelectedPhoto,
+  photo: SelectedPhoto
 ): Promise<PhotoMetadata> => {
   try {
-    const parsed = (await exifr.parse(photo.file, tags as unknown as string[])) as
-      | ExifrResult
-      | undefined
-      | null
+    const parsed = (await exifr.parse(
+      photo.file,
+      tags as unknown as string[]
+    )) as ExifrResult | undefined | null
 
     return {
       fileName: photo.name,
@@ -63,4 +63,3 @@ export const extractPhotoMetadata = async (
     }
   }
 }
-
