@@ -1,5 +1,5 @@
 import { ChevronRight, Ratio, Trash2 } from 'lucide-react'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { dispatchHistoryUpdated } from '@/pages/history/model/historyEvents'
@@ -25,10 +25,6 @@ const SettingsPage = () => {
   const navigate = useNavigate()
   const [format, setFormat] = useState<ExportFormatKey>(() => getExportFormat())
   const [clearHistoryModalOpen, setClearHistoryModalOpen] = useState(false)
-
-  useEffect(() => {
-    setFormat(getExportFormat())
-  }, [])
 
   const runClearHistory = useCallback(async () => {
     try {

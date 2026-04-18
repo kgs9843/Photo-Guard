@@ -1,7 +1,7 @@
 import { Calendar, ImageOff, MapPinOff, Smartphone, UserX } from 'lucide-react'
 
-import { MAX_PHOTOS_PER_BATCH } from '@/pages/dashboard/model/photoSelectionLimits'
 import type { HomeCopy } from '@/pages/dashboard/model/homeCopy.types'
+import { MAX_PHOTOS_PER_BATCH } from '@/pages/dashboard/model/photoSelectionLimits'
 
 export const homeCopyEn: HomeCopy = {
   homeHero: {
