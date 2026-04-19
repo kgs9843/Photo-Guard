@@ -25,7 +25,7 @@ export const cleanCopyEn = {
   selectedMany: (n: number) => `${n} selected`,
   selectedOne: '1 selected',
   heroMulti: (n: number) => `${n} photos`,
-  heroSingleMeta: (count: number) => `${count} metadata fields`,
+  heroSingleMeta: (count: number) => `${count} detail categories`,
   analyzing: 'Analyzing metadata…',
   multiRiskLine: (signals: number) =>
     `Detected ${signals} privacy-related signal(s) across the selection.`,

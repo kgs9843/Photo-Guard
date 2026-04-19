@@ -24,7 +24,7 @@ export const cleanCopyKo = {
   selectedMany: (n: number) => `${n}장 선택`,
   selectedOne: '1장 선택',
   heroMulti: (n: number) => `사진 ${n}장`,
-  heroSingleMeta: (count: number) => `메타데이터 ${count}개 항목`,
+  heroSingleMeta: (count: number) => `상세 정보 ${count}개`,
   analyzing: '메타데이터를 분석하는 중…',
   multiRiskLine: (signals: number) =>
     `선택에 개인정보 관련 신호 ${signals}개가 감지되었습니다.`,

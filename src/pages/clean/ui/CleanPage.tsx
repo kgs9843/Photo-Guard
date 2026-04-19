@@ -23,20 +23,6 @@ type CleanLocationState = {
   photos: SelectedPhoto[]
 }
 
-const countMetadata = (meta: PhotoMetadata) => {
-  let count = 0
-  if (meta.latitude !== undefined && meta.longitude !== undefined) count += 2
-  if (meta.make) count += 1
-  if (meta.model) count += 1
-  if (meta.createdAt) count += 1
-  if (meta.lensModel) count += 1
-  if (meta.focalLength !== undefined) count += 1
-  if (meta.fNumber !== undefined) count += 1
-  if (meta.exposureTime !== undefined) count += 1
-  if (meta.iso !== undefined) count += 1
-  return count
-}
-
 const hasRisk = (meta: PhotoMetadata | undefined) => {
   if (!meta) return false
   return meta.latitude !== undefined && meta.longitude !== undefined
@@ -98,6 +84,24 @@ const canDeleteMetadataFromCleanPage = (
 const formatGps = (meta: PhotoMetadata) => {
   if (meta.latitude === undefined || meta.longitude === undefined) return null
   return `${meta.latitude.toFixed(5)}, ${meta.longitude.toFixed(5)}`
+}
+
+/** 단일 사진 `renderCleanMetaItems`에 나오는 카드 수(GPS·기기·촬영 시각·촬영 정보 각 0~1) */
+const countCleanDetailCards = (m: PhotoMetadata): number => {
+  let n = 0
+  if (formatGps(m)) n += 1
+  if (m.make || m.model) n += 1
+  if (m.createdAt) n += 1
+  if (
+    m.lensModel ||
+    m.focalLength !== undefined ||
+    m.fNumber !== undefined ||
+    m.exposureTime !== undefined ||
+    m.iso !== undefined
+  ) {
+    n += 1
+  }
+  return n
 }
 
 function renderCleanMetaItems(
@@ -481,7 +485,7 @@ const CleanPage = () => {
                 {isMulti
                   ? copy.heroMulti(photos.length)
                   : copy.heroSingleMeta(
-                      metas?.[0] ? countMetadata(metas[0]) : 0
+                      metas?.[0] ? countCleanDetailCards(metas[0]) : 0
                     )}
               </h2>
               <p className="text-on-surface-variant mt-1 text-[12px] font-medium">
