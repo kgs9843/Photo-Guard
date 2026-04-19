@@ -2,9 +2,9 @@ import {
   ArrowLeft,
   Check,
   LoaderCircle,
-  Share2,
+  MapPinOff,
   ShieldCheck,
-  Upload,
+  Smartphone,
 } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -296,7 +296,7 @@ const CleaningPage = () => {
             </div>
 
             <div className="border-outline-variant/5 bg-surface-container-low rounded-[1.5rem] border p-5">
-              <Upload
+              <MapPinOff
                 className="text-tertiary-container/50 mb-3 size-6"
                 aria-hidden
               />
@@ -309,7 +309,10 @@ const CleaningPage = () => {
             </div>
 
             <div className="border-outline-variant/5 bg-surface-container-low rounded-[1.5rem] border p-5">
-              <Share2 className="text-secondary/50 mb-3 size-6" aria-hidden />
+              <Smartphone
+                className="text-secondary/50 mb-3 size-6"
+                aria-hidden
+              />
               <p className="text-on-surface-variant/40 text-[10px] font-bold tracking-tighter uppercase">
                 {copy.cardDeviceLabel}
               </p>
