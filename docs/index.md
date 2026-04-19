@@ -4,13 +4,10 @@
 
 ## 목차
 
-- `docs/architecture/README.md`: 아키텍처 지도(레이어링, 경계, 규칙)
-- `docs/product/README.md`: 제품/도메인 용어, 사용자 여정, 수용 기준
-- `docs/plans/active/README.md`: 실행계획(Exec plan) 템플릿과 운영 방식
-- `docs/plans/completed/README.md`: 완료된 실행계획 아카이브
+- `docs/architecture/README.md`: FSD 배경, **실제 `src/` 트리**, 규칙은 `fsd-core.mdc`로 링크
+- `docs/product/README.md`: Photo Guard 한 줄, 사용자 여정, 용어, 수용 기준 요약
+- `docs/exec-plans/README.md`: 실행 계획(active/completed), worktree·포트·로그, `scripts/exec-plan-init.sh`
 - `docs/references/README.md`: 외부 문서/근거 고정(예: Context7 조회 결과)
-- `docs/workflows/pr-loop.md`: PR 생성/리뷰 반영 루프
-- `docs/workflows/bugfix-loop.md`: 버그 재현→수정→검증 루프
 
 ## 운영 원칙(짧게)
 

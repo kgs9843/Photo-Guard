@@ -13,7 +13,7 @@ export type {
   PrivacyTip,
 } from '@/pages/dashboard/model/homeCopy.types'
 
-/** 앱 기본 홈(대시보드) 카피 언어. 추후 설정·i18n과 연동 시 이 값만 바꾸면 됩니다. */
+/** 기본값(설정·`LocaleProvider`에서 `getHomeCopy(locale)`로 덮어씀). */
 export const DEFAULT_HOME_LOCALE: HomeLocale = 'ko'
 
 const HOME_COPY: Record<HomeLocale, HomeCopy> = {

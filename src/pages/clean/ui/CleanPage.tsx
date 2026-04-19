@@ -12,6 +12,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import TopBar from '@/app/layout/TopBar'
+import { type CleanUiCopy, getCleanCopy } from '@/pages/clean/model/cleanCopy'
+import { useLocale } from '@/shared/lib/useLocale'
 import GradientButton from '@/shared/ui/GradientButton'
 
 import { extractPhotoMetadata } from '../model/extractMetadata'
@@ -98,15 +100,16 @@ const formatGps = (meta: PhotoMetadata) => {
   return `${meta.latitude.toFixed(5)}, ${meta.longitude.toFixed(5)}`
 }
 
-const renderItems = (
+function renderCleanMetaItems(
   isMulti: boolean,
   metas: PhotoMetadata[] | null,
-  isLoading: boolean
-) => {
+  isLoading: boolean,
+  copy: CleanUiCopy
+) {
   if (isLoading) {
     return (
       <div className="bg-surface-container-low text-on-surface-variant rounded-[1.5rem] p-5 text-sm">
-        메타데이터를 읽는 중…
+        {copy.loading}
       </div>
     )
   }
@@ -114,7 +117,7 @@ const renderItems = (
   if (!metas || metas.length === 0) {
     return (
       <div className="bg-surface-container-low text-on-surface-variant rounded-[1.5rem] p-5 text-sm">
-        메타데이터를 찾을 수 없거나 읽을 수 없습니다.
+        {copy.metadataUnavailable}
       </div>
     )
   }
@@ -130,7 +133,9 @@ const renderItems = (
               <MapPin className="size-6" aria-hidden />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-on-surface text-base font-bold">위치 (GPS)</p>
+              <p className="text-on-surface text-base font-bold">
+                {copy.labels.gps}
+              </p>
               <p className="text-on-surface-variant mt-0.5 text-sm">{gps}</p>
             </div>
           </div>
@@ -142,7 +147,9 @@ const renderItems = (
               <Smartphone className="size-6" aria-hidden />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-on-surface text-base font-bold">기기 정보</p>
+              <p className="text-on-surface text-base font-bold">
+                {copy.labels.device}
+              </p>
               <p className="text-on-surface-variant mt-0.5 text-sm">
                 {[m.make, m.model].filter(Boolean).join(' ')}
               </p>
@@ -156,7 +163,9 @@ const renderItems = (
               <CalendarDays className="size-6" aria-hidden />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-on-surface text-base font-bold">촬영 시각</p>
+              <p className="text-on-surface text-base font-bold">
+                {copy.labels.captureTime}
+              </p>
               <p className="text-on-surface-variant mt-0.5 text-sm">
                 {m.createdAt.toString()}
               </p>
@@ -174,7 +183,9 @@ const renderItems = (
               <Camera className="size-6" aria-hidden />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-on-surface text-base font-bold">촬영 정보</p>
+              <p className="text-on-surface text-base font-bold">
+                {copy.labels.shooting}
+              </p>
               <p className="text-on-surface-variant mt-0.5 text-sm">
                 {[
                   m.lensModel,
@@ -210,9 +221,11 @@ const renderItems = (
             <MapPin className="size-6" aria-hidden />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-on-surface text-base font-bold">위치 (GPS)</p>
+            <p className="text-on-surface text-base font-bold">
+              {copy.labels.gps}
+            </p>
             <p className="text-on-surface-variant mt-0.5 text-sm">
-              선택한 사진 중 일부에 위치 좌표가 포함되어 있습니다.
+              {copy.multiHints.gps}
             </p>
           </div>
         </div>
@@ -223,9 +236,11 @@ const renderItems = (
             <Smartphone className="size-6" aria-hidden />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-on-surface text-base font-bold">기기 정보</p>
+            <p className="text-on-surface text-base font-bold">
+              {copy.labels.device}
+            </p>
             <p className="text-on-surface-variant mt-0.5 text-sm">
-              선택한 사진에 기기 관련 메타데이터가 있습니다.
+              {copy.multiHints.device}
             </p>
           </div>
         </div>
@@ -236,9 +251,11 @@ const renderItems = (
             <CalendarDays className="size-6" aria-hidden />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-on-surface text-base font-bold">촬영 시각</p>
+            <p className="text-on-surface text-base font-bold">
+              {copy.labels.captureTime}
+            </p>
             <p className="text-on-surface-variant mt-0.5 text-sm">
-              선택한 사진에 촬영 시각 정보가 있습니다.
+              {copy.multiHints.captureTime}
             </p>
           </div>
         </div>
@@ -249,9 +266,11 @@ const renderItems = (
             <Camera className="size-6" aria-hidden />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-on-surface text-base font-bold">촬영 정보</p>
+            <p className="text-on-surface text-base font-bold">
+              {copy.labels.shooting}
+            </p>
             <p className="text-on-surface-variant mt-0.5 text-sm">
-              선택한 사진에 노출·ISO·렌즈 등 촬영 메타데이터가 있습니다.
+              {copy.multiHints.shooting}
             </p>
           </div>
         </div>
@@ -260,7 +279,13 @@ const renderItems = (
   )
 }
 
-const MultiPhotoStack = ({ photos }: { photos: SelectedPhoto[] }) => {
+const MultiPhotoStack = ({
+  photos,
+  copy,
+}: {
+  photos: SelectedPhoto[]
+  copy: CleanUiCopy
+}) => {
   const layers = photos.slice(0, 3)
   const remaining = Math.max(0, photos.length - layers.length)
 
@@ -293,13 +318,13 @@ const MultiPhotoStack = ({ photos }: { photos: SelectedPhoto[] }) => {
           <div className="bg-surface-container-low absolute inset-0 overflow-hidden rounded-4xl border-2 border-white shadow-2xl">
             <img
               className="h-full w-full object-cover"
-              alt={layers[layers.length - 1]?.name ?? '선택한 사진'}
+              alt={layers[layers.length - 1]?.name ?? copy.stackExtraAlt}
               src={layers[layers.length - 1]?.objectUrl ?? photos[0]!.objectUrl}
             />
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 text-white">
               <span className="text-3xl font-extrabold">+{remaining}</span>
               <span className="mt-1 text-xs font-medium tracking-widest">
-                사진
+                {copy.stackExtraLabel}
               </span>
             </div>
           </div>
@@ -312,6 +337,8 @@ const MultiPhotoStack = ({ photos }: { photos: SelectedPhoto[] }) => {
 const CleanPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { locale } = useLocale()
+  const copy = useMemo(() => getCleanCopy(locale), [locale])
   const state = (location.state ?? null) as CleanLocationState | null
 
   const photos = useMemo(() => state?.photos ?? [], [state])
@@ -385,7 +412,7 @@ const CleanPage = () => {
               className="hover:bg-surface-container-low flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors"
             >
               <ArrowLeft className="size-5" aria-hidden />
-              뒤로
+              {copy.empty.back}
             </button>
           }
         />
@@ -393,10 +420,10 @@ const CleanPage = () => {
         <main className="mx-auto max-w-2xl px-6 pt-24 pb-24">
           <section className="bg-surface-container-lowest rounded-4xl p-6 shadow-sm">
             <div className="text-xl font-bold tracking-tight">
-              선택된 사진이 없습니다
+              {copy.empty.title}
             </div>
             <p className="text-on-surface-variant mt-2 text-sm leading-relaxed">
-              대시보드에서 사진을 선택해 주세요.
+              {copy.empty.body}
             </p>
           </section>
         </main>
@@ -412,7 +439,7 @@ const CleanPage = () => {
             type="button"
             onClick={() => navigate(-1)}
             className="hover:bg-surface-container-low flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors"
-            aria-label="뒤로"
+            aria-label={copy.topBarBackAria}
           >
             <ArrowLeft className="size-5" aria-hidden />
           </button>
@@ -422,10 +449,10 @@ const CleanPage = () => {
             {isMulti ? (
               <>
                 <Layers className="size-4" aria-hidden />
-                <span>{photos.length}장 선택</span>
+                <span>{copy.selectedMany(photos.length)}</span>
               </>
             ) : (
-              <span>1장 선택</span>
+              <span>{copy.selectedOne}</span>
             )}
           </div>
         }
@@ -433,7 +460,7 @@ const CleanPage = () => {
 
       <main className="mx-auto w-full max-w-2xl flex-1 px-6 pt-20 pb-28">
         {isMulti ? (
-          <MultiPhotoStack photos={photos} />
+          <MultiPhotoStack photos={photos} copy={copy} />
         ) : (
           <section className="mt-4 mb-8">
             <div className="bg-surface-container-low shadow-primary/5 relative aspect-square w-full overflow-hidden rounded-4xl shadow-xl">
@@ -452,17 +479,19 @@ const CleanPage = () => {
             <div className="min-w-0">
               <h2 className="text-on-surface text-xl font-extrabold tracking-tight">
                 {isMulti
-                  ? `사진 ${photos.length}장`
-                  : `메타데이터 ${metas?.[0] ? countMetadata(metas[0]) : 0}개 항목`}
+                  ? copy.heroMulti(photos.length)
+                  : copy.heroSingleMeta(
+                      metas?.[0] ? countMetadata(metas[0]) : 0
+                    )}
               </h2>
               <p className="text-on-surface-variant mt-1 text-[12px] font-medium">
                 {isLoading
-                  ? '메타데이터를 분석하는 중…'
+                  ? copy.analyzing
                   : isMulti
-                    ? `선택에 개인정보 관련 신호 ${countRisks(metas)}개가 감지되었습니다.`
+                    ? copy.multiRiskLine(countRisks(metas))
                     : hasRisk(metas?.[0])
-                      ? '개인정보와 관련될 수 있는 메타데이터가 있습니다.'
-                      : '높은 위험도의 메타데이터는 감지되지 않았습니다.'}
+                      ? copy.singleRiskYes
+                      : copy.singleRiskNo}
               </p>
             </div>
             <div className="bg-primary-container flex items-center justify-center rounded-2xl p-3 text-white shadow-lg">
@@ -473,24 +502,23 @@ const CleanPage = () => {
 
         <section className="space-y-4">
           <h3 className="text-on-surface-variant px-1 text-sm font-bold tracking-wide">
-            {isMulti ? '위험 분석' : '상세 정보'}
+            {isMulti ? copy.sectionRisk : copy.sectionDetail}
           </h3>
 
           <div className="grid grid-cols-1 gap-3">
-            {renderItems(isMulti, metas, isLoading)}
+            {renderCleanMetaItems(isMulti, metas, isLoading, copy)}
           </div>
         </section>
 
         <div className="text-on-surface-variant mt-8 mr-12 mb-6 ml-6 text-sm leading-relaxed not-italic opacity-60">
-          * 메타데이터를 삭제하면 촬영 위치·기기 정보 등이 영구적으로 가려질 수
-          있습니다.
+          {copy.disclaimer}
         </div>
       </main>
 
       <footer className="from-surface via-surface/95 sticky bottom-0 w-full bg-linear-to-t to-transparent px-6 pt-4 pb-8 backdrop-blur-sm">
         <div className="mx-auto max-w-2xl">
           <GradientButton
-            ariaLabel="메타데이터 삭제"
+            ariaLabel={copy.ctaAria}
             disabled={!canDeleteMetadata}
             className={canDeleteMetadata ? '' : 'from-[#a1a1a1] to-[#bdbdbd]'}
             onClick={() => {
@@ -504,7 +532,7 @@ const CleanPage = () => {
           >
             <span className="inline-flex items-center justify-center gap-3">
               <Sparkles className="size-6" aria-hidden />
-              {isMulti ? '모든 사진 메타데이터 삭제' : '선택한 메타데이터 삭제'}
+              {isMulti ? copy.ctaMulti : copy.ctaSingle}
             </span>
           </GradientButton>
         </div>

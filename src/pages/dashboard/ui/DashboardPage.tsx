@@ -2,20 +2,19 @@ import { Camera } from 'lucide-react'
 import { useCallback, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-import {
-  DEFAULT_HOME_LOCALE,
-  getHomeCopy,
-} from '@/pages/dashboard/model/homeCopy'
+import { getHomeCopy } from '@/pages/dashboard/model/homeCopy'
+import { useLocale } from '@/shared/lib/useLocale'
 
 const DashboardPage = () => {
   const navigate = useNavigate()
+  const { locale } = useLocale()
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const accept = useMemo(() => ['image/*'].join(','), [])
 
   const { homeHero, homePrivacyHeading, privacyTips, photoSelection } = useMemo(
-    () => getHomeCopy(DEFAULT_HOME_LOCALE),
-    []
+    () => getHomeCopy(locale),
+    [locale]
   )
 
   const handleChoose = useCallback(() => {

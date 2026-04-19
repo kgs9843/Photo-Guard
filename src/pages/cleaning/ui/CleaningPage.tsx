@@ -11,12 +11,17 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 import TopBar from '@/app/layout/TopBar'
 import { extractPhotoMetadata } from '@/pages/clean/model/extractMetadata'
+import {
+  type CleaningUiCopy,
+  getCleaningCopy,
+} from '@/pages/cleaning/model/cleaningCopy'
 import { putCleanedRecord } from '@/pages/history/model/cleanedHistoryDb'
 import { dispatchHistoryUpdated } from '@/pages/history/model/historyEvents'
 import {
   exportFormatMime,
   getExportFormat,
 } from '@/pages/settings/model/exportFormatStorage'
+import { useLocale } from '@/shared/lib/useLocale'
 import GradientButton from '@/shared/ui/GradientButton'
 
 import { buildRemovalEvidence } from '../model/removalEvidence'
@@ -32,14 +37,19 @@ type LocationState = CleaningJob
 const clamp = (v: number, min: number, max: number) =>
   Math.max(min, Math.min(max, v))
 
-const progressFrom = (done: number, total: number): CleaningProgress => {
+const progressFrom = (
+  done: number,
+  total: number,
+  progressCopy: CleaningUiCopy['progress']
+): CleaningProgress => {
   const safeTotal = Math.max(1, total)
   const percent = Math.round((done / safeTotal) * 100)
   return {
     total,
     done,
     percent: clamp(percent, 0, 100),
-    statusText: done >= total ? 'Done' : 'Cleaning…',
+    statusText:
+      done >= total ? progressCopy.statusDone : progressCopy.statusRunning,
   }
 }
 
@@ -64,13 +74,15 @@ const downloadBlob = (blob: Blob, filename: string) => {
 const CleaningPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { locale } = useLocale()
+  const copy = useMemo(() => getCleaningCopy(locale), [locale])
   const state = (location.state ?? null) as LocationState | null
 
   const photos = useMemo(() => state?.photos ?? [], [state])
   const total = photos.length
 
   const [progress, setProgress] = useState<CleaningProgress>(() =>
-    progressFrom(0, total)
+    progressFrom(0, total, copy.progress)
   )
   const [results, setResults] = useState<CleaningResultItem[] | null>(null)
   const [failedCount, setFailedCount] = useState(0)
@@ -84,7 +96,7 @@ const CleaningPage = () => {
       if (photos.length === 0) {
         if (runId !== cleaningRunIdRef.current) return
         setResults([])
-        setProgress(progressFrom(0, 0))
+        setProgress(progressFrom(0, 0, copy.progress))
         return
       }
 
@@ -96,7 +108,7 @@ const CleaningPage = () => {
 
       setResults(null)
       setFailedCount(0)
-      setProgress(progressFrom(0, photos.length))
+      setProgress(progressFrom(0, photos.length, copy.progress))
 
       for (const photo of photos) {
         if (cancelled || runId !== cleaningRunIdRef.current) return
@@ -139,7 +151,7 @@ const CleaningPage = () => {
           done += 1
           if (!cancelled && runId === cleaningRunIdRef.current) {
             setFailedCount(failed)
-            setProgress(progressFrom(done, photos.length))
+            setProgress(progressFrom(done, photos.length, copy.progress))
           }
         }
       }
@@ -156,7 +168,7 @@ const CleaningPage = () => {
     return () => {
       cancelled = true
     }
-  }, [photos])
+  }, [photos, copy])
 
   const isDone = progress.done >= progress.total && results !== null
   const canSave = isDone && results.length > 0
@@ -172,13 +184,13 @@ const CleaningPage = () => {
     return { r, c, offset }
   }, [progress.percent])
 
-  const headline = isDone ? '삭제 완료' : '메타데이터 제거 중'
+  const headline = isDone ? copy.headlineDone : copy.headlineRunning
   const subline =
     progress.total > 0
       ? isDone
-        ? `${progress.total}장의 사진에서 위치 및 기기 정보가 삭제되었습니다.`
-        : `${progress.total}장의 사진 중 ${progress.done}장 처리 중...`
-      : 'No selected photos'
+        ? copy.sublineDone(progress.total)
+        : copy.sublineRunning(progress.total, progress.done)
+      : copy.sublineNoPhotos
 
   return (
     <div className="bg-surface text-on-surface flex min-h-dvh flex-col">
@@ -188,7 +200,7 @@ const CleaningPage = () => {
             type="button"
             onClick={() => navigate('/')}
             className="hover:bg-surface-container-low flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors"
-            aria-label="Back"
+            aria-label={copy.backAria}
           >
             <ArrowLeft className="size-5" aria-hidden />
           </button>
@@ -247,7 +259,7 @@ const CleaningPage = () => {
                 />
               )}
               <span className="text-primary text-[11px] font-extrabold tracking-widest uppercase">
-                {isDone ? 'SECURED' : 'CLEANING'}
+                {isDone ? copy.badges.done : copy.badges.running}
               </span>
             </div>
           </div>
@@ -261,7 +273,7 @@ const CleaningPage = () => {
             </p>
             {failedCount > 0 ? (
               <p className="text-tertiary text-sm font-semibold">
-                {failedCount} files could not be processed.
+                {copy.failedLine(failedCount)}
               </p>
             ) : null}
           </div>
@@ -271,10 +283,10 @@ const CleaningPage = () => {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <span className="text-on-surface-variant/60 text-[11px] font-bold tracking-wider uppercase">
-                    Status
+                    {copy.statusCardLabel}
                   </span>
                   <p className="text-on-surface text-lg font-bold">
-                    {isDone ? '데이터 보호 완료' : progress.statusText}
+                    {isDone ? copy.statusDataDone : progress.statusText}
                   </p>
                 </div>
                 <div className="bg-primary/10 rounded-2xl p-3">
@@ -289,27 +301,27 @@ const CleaningPage = () => {
                 aria-hidden
               />
               <p className="text-on-surface-variant/40 text-[10px] font-bold tracking-tighter uppercase">
-                GPS metadata
+                {copy.cardGpsLabel}
               </p>
               <p className="text-on-surface font-extrabold">
-                {isDone ? 'REMOVED' : 'WAITING'}
+                {isDone ? copy.cardValueRemoved : copy.cardValueWaiting}
               </p>
             </div>
 
             <div className="border-outline-variant/5 bg-surface-container-low rounded-[1.5rem] border p-5">
               <Share2 className="text-secondary/50 mb-3 size-6" aria-hidden />
               <p className="text-on-surface-variant/40 text-[10px] font-bold tracking-tighter uppercase">
-                Device id
+                {copy.cardDeviceLabel}
               </p>
               <p className="text-on-surface font-extrabold">
-                {isDone ? 'CLEANED' : 'PENDING'}
+                {isDone ? copy.cardValueCleaned : copy.cardValuePending}
               </p>
             </div>
           </div>
 
           <div className="mt-auto w-full space-y-3">
             <GradientButton
-              ariaLabel="Save cleaned files"
+              ariaLabel={copy.saveCta}
               disabled={!canSave}
               onClick={() => {
                 if (!results) return
@@ -323,7 +335,7 @@ const CleaningPage = () => {
               }}
               className={canSave ? '' : 'from-[#a1a1a1] to-[#bdbdbd]'}
             >
-              {canSave ? '갤러리에 저장' : '처리 완료 후 저장할 수 있습니다'}
+              {canSave ? copy.saveCta : copy.saveDisabled}
             </GradientButton>
 
             <button
@@ -338,8 +350,8 @@ const CleaningPage = () => {
                     r => new File([r.blob], r.name, { type: r.type })
                   )
                   await navigator.share({
-                    title: 'Photo Guard',
-                    text: 'Cleaned photos',
+                    title: copy.shareTitle,
+                    text: copy.shareText,
                     files,
                   })
                 } catch {
@@ -353,7 +365,7 @@ const CleaningPage = () => {
                   : 'bg-surface-container-high/50 text-on-secondary-container/40 cursor-not-allowed',
               ].join(' ')}
             >
-              바로 공유하기
+              {copy.shareCta}
             </button>
           </div>
         </div>

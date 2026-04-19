@@ -4,10 +4,10 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 import { reencodeBlobToMime } from '@/pages/cleaning/model/stripMetadata'
 import { getCleanedRecordById } from '@/pages/history/model/cleanedHistoryDb'
-import { historyDetailCopy } from '@/pages/history/model/historyDetailCopy'
+import { getHistoryDetailCopy } from '@/pages/history/model/historyDetailCopy'
 import { cleanedStoredToHistoryRecord } from '@/pages/history/model/historyRecordsUi'
 import {
-  removedMetaRowDefs,
+  getRemovedMetaRowDefs,
   type RemovedMetaRowKind,
 } from '@/pages/history/model/historyRemovedMetaRows'
 import type { HistoryRecord } from '@/pages/history/model/types'
@@ -15,6 +15,7 @@ import {
   exportFormatMime,
   getExportFormat,
 } from '@/pages/settings/model/exportFormatStorage'
+import { useLocale } from '@/shared/lib/useLocale'
 import GradientButton from '@/shared/ui/GradientButton'
 
 const downloadBlob = (blob: Blob, filename: string) => {
@@ -37,6 +38,9 @@ const downloadBlob = (blob: Blob, filename: string) => {
 const HistoryDetailPage = () => {
   const { recordId } = useParams<{ recordId: string }>()
   const navigate = useNavigate()
+  const { locale } = useLocale()
+  const detailCopy = useMemo(() => getHistoryDetailCopy(locale), [locale])
+  const rowDefs = useMemo(() => getRemovedMetaRowDefs(locale), [locale])
 
   const [record, setRecord] = useState<HistoryRecord | null>(null)
   const [loading, setLoading] = useState(true)
@@ -104,14 +108,14 @@ const HistoryDetailPage = () => {
       const mime = exportFormatMime(format)
       const out = await reencodeBlobToMime(blob, mime, record.fileName)
       if (!out) {
-        window.alert(historyDetailCopy.saveFailed)
+        window.alert(detailCopy.saveFailed)
         return
       }
       downloadBlob(out.blob, out.name)
     } catch {
-      window.alert(historyDetailCopy.saveFailed)
+      window.alert(detailCopy.saveFailed)
     }
-  }, [record])
+  }, [record, detailCopy])
 
   const handleShare = useCallback(async () => {
     if (!record) return
@@ -119,7 +123,7 @@ const HistoryDetailPage = () => {
       typeof navigator === 'undefined' ||
       typeof navigator.share !== 'function'
     ) {
-      window.alert(historyDetailCopy.shareUnsupported)
+      window.alert(detailCopy.shareUnsupported)
       return
     }
     try {
@@ -137,38 +141,38 @@ const HistoryDetailPage = () => {
 
       await navigator.share({
         title: record.fileName,
-        text: historyDetailCopy.statusBody,
+        text: detailCopy.statusBody,
         url: record.imageSrc,
       })
     } catch (e) {
       if ((e as Error)?.name === 'AbortError') return
-      window.alert(historyDetailCopy.shareFailed)
+      window.alert(detailCopy.shareFailed)
     }
-  }, [record])
+  }, [record, detailCopy])
 
   const visibleRows = useMemo(() => {
     if (!record) return []
-    return removedMetaRowDefs.filter(def => {
+    return rowDefs.filter(def => {
       if (def.removedFlag) {
         return record.removed[def.removedFlag]
       }
       return record.removed.otherCount > 0
     })
-  }, [record])
+  }, [record, rowDefs])
 
   const rowBadge = (kind: RemovedMetaRowKind): string => {
     if (!record) return ''
     if (kind === 'other') {
-      return historyDetailCopy.badgeOther(record.removed.otherCount)
+      return detailCopy.badgeOther(record.removed.otherCount)
     }
-    return historyDetailCopy.badgeCleared
+    return detailCopy.badgeCleared
   }
 
   if (loading) {
     return (
       <div className="space-y-6 pb-12">
         <p className="text-on-surface-variant text-base leading-relaxed">
-          불러오는 중…
+          {detailCopy.loading}
         </p>
       </div>
     )
@@ -178,14 +182,14 @@ const HistoryDetailPage = () => {
     return (
       <div className="space-y-6 pb-12">
         <p className="text-on-surface-variant text-base leading-relaxed">
-          {historyDetailCopy.notFoundTitle}
+          {detailCopy.notFoundTitle}
         </p>
         <button
           type="button"
           onClick={() => navigate('/history')}
           className="text-primary text-sm font-bold underline-offset-4 hover:underline"
         >
-          {historyDetailCopy.notFoundCta}
+          {detailCopy.notFoundCta}
         </button>
       </div>
     )
@@ -229,17 +233,17 @@ const HistoryDetailPage = () => {
           />
         </div>
         <h2 className="text-on-surface text-2xl font-bold tracking-tight">
-          {historyDetailCopy.statusTitle}
+          {detailCopy.statusTitle}
         </h2>
         <p className="text-on-surface-variant max-w-md text-base leading-relaxed">
-          {historyDetailCopy.statusBody}
+          {detailCopy.statusBody}
         </p>
       </section>
 
       {evidenceLines.length > 0 ? (
         <section className="flex flex-col gap-3">
           <h3 className="text-on-surface px-1 text-lg font-medium tracking-tight">
-            {historyDetailCopy.sectionEvidenceHeading}
+            {detailCopy.sectionEvidenceHeading}
           </h3>
           <ul className="border-outline-variant/10 bg-surface-container-lowest space-y-2 rounded-xl border p-4 shadow-sm">
             {evidenceLines.map((line, i) => (
@@ -256,7 +260,7 @@ const HistoryDetailPage = () => {
 
       <section className="flex flex-col gap-4">
         <h3 className="text-on-surface px-1 text-lg font-medium tracking-tight">
-          {historyDetailCopy.sectionRemovedHeading}
+          {detailCopy.sectionRemovedHeading}
         </h3>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {visibleRows.map(def => {
@@ -285,14 +289,16 @@ const HistoryDetailPage = () => {
         {record.removed.otherCount > 0 ? (
           <div className="border-outline-variant/10 bg-surface-container-lowest mt-1 rounded-xl border p-4 shadow-sm">
             <h4 className="text-on-surface text-sm font-semibold tracking-tight">
-              {historyDetailCopy.sectionOtherTagsHeading}
+              {detailCopy.sectionOtherTagsHeading}
             </h4>
             {record.otherTagDetails && record.otherTagDetails.length > 0 ? (
               <>
                 {record.removed.otherCount > record.otherTagDetails.length ? (
                   <p className="text-on-surface-variant mt-2 text-xs leading-relaxed">
-                    전체 {record.removed.otherCount}개 중 상위{' '}
-                    {record.otherTagDetails.length}개만 표시합니다.
+                    {detailCopy.otherTagsTruncatedNote(
+                      record.removed.otherCount,
+                      record.otherTagDetails.length
+                    )}
                   </p>
                 ) : null}
                 <dl className="mt-4 max-h-80 space-y-3 overflow-y-auto pr-1">
@@ -313,7 +319,7 @@ const HistoryDetailPage = () => {
               </>
             ) : (
               <p className="text-on-surface-variant mt-3 text-sm leading-relaxed">
-                {historyDetailCopy.otherTagsLegacyHint}
+                {detailCopy.otherTagsLegacyHint}
               </p>
             )}
           </div>
@@ -322,13 +328,13 @@ const HistoryDetailPage = () => {
 
       <section className="mt-2 flex w-full flex-col gap-3">
         <GradientButton
-          ariaLabel={historyDetailCopy.saveToGallery}
+          ariaLabel={detailCopy.saveToGallery}
           onClick={() => {
             void handleSaveToGallery()
           }}
           className="shadow-primary/25 shadow-xl"
         >
-          {historyDetailCopy.saveToGallery}
+          {detailCopy.saveToGallery}
         </GradientButton>
         <button
           type="button"
@@ -337,7 +343,7 @@ const HistoryDetailPage = () => {
           }}
           className="bg-surface-container-high text-on-secondary-container hover:bg-surface-container-highest flex w-full items-center justify-center gap-2 rounded-[1.5rem] py-5 text-lg font-bold transition-all duration-200 active:scale-[0.95]"
         >
-          {historyDetailCopy.share}
+          {detailCopy.share}
         </button>
       </section>
     </div>

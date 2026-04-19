@@ -1,11 +1,17 @@
 import { ArrowLeft, BadgeInfo, Clock, Target } from 'lucide-react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import TopBar from '@/app/layout/TopBar'
-import { privacyCopy } from '@/pages/privacy/model/privacyCopy'
+import { getPrivacyCopy } from '@/pages/privacy/model/privacyCopy'
+import { getShellCopy } from '@/shared/lib/shellCopy'
+import { useLocale } from '@/shared/lib/useLocale'
 
 const PrivacyPolicyPage = () => {
   const navigate = useNavigate()
+  const { locale } = useLocale()
+  const shell = useMemo(() => getShellCopy(locale), [locale])
+  const privacy = useMemo(() => getPrivacyCopy(locale), [locale])
 
   return (
     <div className="bg-surface text-on-surface min-h-dvh antialiased">
@@ -15,14 +21,14 @@ const PrivacyPolicyPage = () => {
             type="button"
             onClick={() => navigate(-1)}
             className="text-primary -ml-1 rounded-xl p-2 transition-opacity hover:opacity-80 active:scale-95"
-            aria-label="뒤로"
+            aria-label={shell.backAria}
           >
             <ArrowLeft className="size-6" aria-hidden strokeWidth={2} />
           </button>
         }
         title={
           <h1 className="text-on-surface max-w-full font-['Manrope',sans-serif] text-base font-semibold tracking-tight text-pretty wrap-break-word sm:text-lg">
-            {privacyCopy.topBarTitle}
+            {privacy.topBarTitle}
           </h1>
         }
         right={<span className="inline-block w-10 shrink-0" aria-hidden />}
@@ -31,10 +37,10 @@ const PrivacyPolicyPage = () => {
       <main className="mx-auto max-w-4xl space-y-8 px-6 pt-24 pb-12 md:px-8">
         <div className="mb-10 space-y-4">
           <h2 className="text-on-surface text-2xl leading-tight font-bold tracking-tight md:text-4xl">
-            {privacyCopy.heroTitle}
+            {privacy.heroTitle}
           </h2>
           <p className="text-on-surface-variant text-base leading-relaxed">
-            {privacyCopy.heroLead}
+            {privacy.heroLead}
           </p>
         </div>
 
@@ -45,12 +51,12 @@ const PrivacyPolicyPage = () => {
               aria-hidden
               strokeWidth={2}
             />
-            {privacyCopy.collection.title}
+            {privacy.collection.title}
           </h3>
           <div className="text-on-surface-variant space-y-3 leading-relaxed">
-            <p>{privacyCopy.collection.lead}</p>
+            <p>{privacy.collection.lead}</p>
             <ul className="list-inside list-disc space-y-2 pl-2">
-              {privacyCopy.collection.items.map(row => (
+              {privacy.collection.items.map(row => (
                 <li key={row.label}>
                   <strong className="text-on-surface font-medium">
                     {row.label}
@@ -69,13 +75,13 @@ const PrivacyPolicyPage = () => {
               aria-hidden
               strokeWidth={2}
             />
-            {privacyCopy.purpose.title}
+            {privacy.purpose.title}
           </h3>
           <p className="text-on-surface-variant mb-4 leading-relaxed">
-            {privacyCopy.purpose.lead}
+            {privacy.purpose.lead}
           </p>
           <div className="grid gap-4 md:grid-cols-2">
-            {privacyCopy.purpose.cards.map(card => (
+            {privacy.purpose.cards.map(card => (
               <div
                 key={card.title}
                 className="bg-surface-container-lowest rounded-lg p-4"
@@ -98,21 +104,21 @@ const PrivacyPolicyPage = () => {
               aria-hidden
               strokeWidth={2}
             />
-            {privacyCopy.retention.title}
+            {privacy.retention.title}
           </h3>
           <p className="text-on-surface-variant leading-relaxed">
-            {privacyCopy.retention.body}
+            {privacy.retention.body}
           </p>
           <div className="bg-surface-container-lowest text-on-surface-variant mt-4 rounded-lg p-4 text-sm leading-relaxed">
-            <p>{privacyCopy.retention.boxLines[0]}</p>
+            <p>{privacy.retention.boxLines[0]}</p>
             <p className="text-primary mt-1 font-medium">
-              {privacyCopy.retention.boxLines[1]}
+              {privacy.retention.boxLines[1]}
             </p>
           </div>
         </section>
 
         <div className="text-on-surface-variant pt-8 text-center text-sm opacity-70">
-          <p>{privacyCopy.effectiveDate}</p>
+          <p>{privacy.effectiveDate}</p>
         </div>
       </main>
     </div>

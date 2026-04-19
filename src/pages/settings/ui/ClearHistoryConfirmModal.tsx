@@ -1,11 +1,9 @@
 import { AlertTriangle } from 'lucide-react'
-import { useCallback, useEffect, useId, useRef } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef } from 'react'
 import { createPortal } from 'react-dom'
 
-import {
-  clearHistoryBlock,
-  clearHistoryModal,
-} from '@/pages/settings/model/settingsCopy'
+import { getSettingsCopy } from '@/pages/settings/model/settingsCopy'
+import { useLocale } from '@/shared/lib/useLocale'
 
 type ClearHistoryConfirmModalProps = {
   open: boolean
@@ -18,6 +16,8 @@ const ClearHistoryConfirmModal = ({
   onClose,
   onConfirm,
 }: ClearHistoryConfirmModalProps) => {
+  const { locale } = useLocale()
+  const copy = useMemo(() => getSettingsCopy(locale), [locale])
   const titleId = useId()
   const descriptionId = useId()
   const panelRef = useRef<HTMLDivElement>(null)
@@ -99,13 +99,13 @@ const ClearHistoryConfirmModal = ({
             id={titleId}
             className="text-on-surface mb-3 text-[1.5rem] font-semibold tracking-tight"
           >
-            {clearHistoryBlock.title}
+            {copy.clearHistoryBlock.title}
           </h2>
           <p
             id={descriptionId}
             className="text-on-surface-variant mb-8 px-2 text-[1rem] leading-relaxed"
           >
-            {clearHistoryModal.body}
+            {copy.clearHistoryModal.body}
           </p>
 
           <div className="flex w-full flex-col gap-3">
@@ -114,7 +114,7 @@ const ClearHistoryConfirmModal = ({
               className="bg-tertiary text-on-tertiary w-full rounded-xl px-6 py-4 text-[1rem] font-bold shadow-sm transition-all duration-200 active:scale-[0.98]"
               onClick={handleConfirm}
             >
-              {clearHistoryModal.delete}
+              {copy.clearHistoryModal.delete}
             </button>
             <button
               type="button"
@@ -127,7 +127,7 @@ const ClearHistoryConfirmModal = ({
                 }
               }}
             >
-              {clearHistoryModal.cancel}
+              {copy.clearHistoryModal.cancel}
             </button>
           </div>
         </div>

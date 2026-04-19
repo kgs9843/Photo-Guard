@@ -1,5 +1,5 @@
-import { ChevronRight, Ratio, Trash2 } from 'lucide-react'
-import { useCallback, useState } from 'react'
+import { ChevronRight, Globe, Ratio, Trash2 } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { dispatchHistoryUpdated } from '@/pages/history/model/historyEvents'
@@ -8,21 +8,17 @@ import {
   getExportFormat,
   setExportFormat,
 } from '@/pages/settings/model/exportFormatStorage'
-import {
-  appInfo,
-  clearHistoryBlock,
-  exportFormatBlock,
-  type ExportFormatKey,
-  exportFormatLabels,
-  settingsHero,
-  settingsSections,
-} from '@/pages/settings/model/settingsCopy'
+import type { ExportFormatKey } from '@/pages/settings/model/settingsCopy'
+import { getSettingsCopy } from '@/pages/settings/model/settingsCopy'
 import ClearHistoryConfirmModal from '@/pages/settings/ui/ClearHistoryConfirmModal'
+import { useLocale } from '@/shared/lib/useLocale'
 
 const APP_VERSION = '1.0.0'
 
 const SettingsPage = () => {
   const navigate = useNavigate()
+  const { locale, setLocale } = useLocale()
+  const copy = useMemo(() => getSettingsCopy(locale), [locale])
   const [format, setFormat] = useState<ExportFormatKey>(() => getExportFormat())
   const [clearHistoryModalOpen, setClearHistoryModalOpen] = useState(false)
 
@@ -30,24 +26,24 @@ const SettingsPage = () => {
     try {
       const removed = await clearPhotoGuardLocalHistory()
       if (removed < 0) {
-        window.alert(clearHistoryBlock.failed)
+        window.alert(copy.clearHistoryBlock.failed)
         return
       }
       if (removed === 0) {
-        window.alert(clearHistoryBlock.empty)
+        window.alert(copy.clearHistoryBlock.empty)
         return
       }
 
       dispatchHistoryUpdated()
-      window.alert(clearHistoryBlock.done)
+      window.alert(copy.clearHistoryBlock.done)
     } catch {
-      window.alert(clearHistoryBlock.failed)
+      window.alert(copy.clearHistoryBlock.failed)
     }
-  }, [])
+  }, [copy.clearHistoryBlock])
 
   const handleConfirmClearHistory = useCallback(() => {
     setClearHistoryModalOpen(false)
-    runClearHistory()
+    void runClearHistory()
   }, [runClearHistory])
 
   return (
@@ -72,10 +68,10 @@ const SettingsPage = () => {
           />
         </div>
         <h2 className="text-on-surface text-2xl font-bold tracking-tight">
-          {settingsHero.title}
+          {copy.settingsHero.title}
         </h2>
         <p className="text-on-surface-variant mt-1 text-sm leading-relaxed">
-          {settingsHero.subtitle}
+          {copy.settingsHero.subtitle}
         </p>
       </section>
 
@@ -84,14 +80,57 @@ const SettingsPage = () => {
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="bg-surface-container-low text-on-surface-variant flex size-10 shrink-0 items-center justify-center rounded-xl">
+                <Globe className="size-5" aria-hidden strokeWidth={2} />
+              </div>
+              <div>
+                <p className="text-on-surface font-bold">
+                  {copy.languageBlock.title}
+                </p>
+                <p className="text-on-surface-variant text-xs">
+                  {copy.languageBlock.description}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {(['ko', 'en'] as const).map(key => {
+              const active = locale === key
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => {
+                    try {
+                      setLocale(key)
+                    } catch {
+                      /* noop */
+                    }
+                  }}
+                  className={
+                    active
+                      ? 'bg-primary text-on-primary rounded-full px-4 py-1.5 text-xs font-bold'
+                      : 'bg-surface-container-high text-on-surface-variant rounded-full px-4 py-1.5 text-xs font-bold'
+                  }
+                >
+                  {copy.languageLabels[key]}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="bg-surface-container-lowest rounded-[1.5rem] p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="bg-surface-container-low text-on-surface-variant flex size-10 shrink-0 items-center justify-center rounded-xl">
                 <Ratio className="size-5" aria-hidden strokeWidth={2} />
               </div>
               <div>
                 <p className="text-on-surface font-bold">
-                  {exportFormatBlock.title}
+                  {copy.exportFormatBlock.title}
                 </p>
                 <p className="text-on-surface-variant text-xs">
-                  {exportFormatBlock.description}
+                  {copy.exportFormatBlock.description}
                 </p>
               </div>
             </div>
@@ -117,7 +156,7 @@ const SettingsPage = () => {
                       : 'bg-surface-container-high text-on-surface-variant rounded-full px-4 py-1.5 text-xs font-bold'
                   }
                 >
-                  {exportFormatLabels[key]}
+                  {copy.exportFormatLabels[key]}
                 </button>
               )
             })}
@@ -136,25 +175,27 @@ const SettingsPage = () => {
               <Trash2 className="size-5" aria-hidden strokeWidth={2} />
             </div>
             <div>
-              <p className="text-error font-bold">{clearHistoryBlock.title}</p>
+              <p className="text-error font-bold">
+                {copy.clearHistoryBlock.title}
+              </p>
               <p className="text-on-surface-variant text-xs">
-                {clearHistoryBlock.description}
+                {copy.clearHistoryBlock.description}
               </p>
             </div>
           </div>
         </button>
 
         <h3 className="text-on-surface-variant px-2 pt-4 text-xs font-bold tracking-widest uppercase">
-          {settingsSections.appInfo}
+          {copy.settingsSections.appInfo}
         </h3>
 
         <div className="bg-surface-container-lowest mb-12 overflow-hidden rounded-[1.5rem] shadow-sm">
           <div className="flex items-center justify-between px-6 py-6">
             <span className="text-on-surface text-sm font-medium">
-              {appInfo.versionLabel}
+              {copy.appInfo.versionLabel}
             </span>
             <span className="text-primary text-sm font-bold">
-              v{APP_VERSION} {appInfo.latestVersionSuffix}
+              v{APP_VERSION} {copy.appInfo.latestVersionSuffix}
             </span>
           </div>
           <div className="bg-surface-variant mx-6 h-px opacity-50" />
@@ -164,7 +205,7 @@ const SettingsPage = () => {
             onClick={() => navigate('/privacy')}
           >
             <span className="text-on-surface text-sm font-medium">
-              {appInfo.terms}
+              {copy.appInfo.terms}
             </span>
             <ChevronRight
               className="text-on-surface-variant size-5 shrink-0"
@@ -179,7 +220,7 @@ const SettingsPage = () => {
             onClick={() => navigate('/licenses')}
           >
             <span className="text-on-surface text-sm font-medium">
-              {appInfo.licenses}
+              {copy.appInfo.licenses}
             </span>
             <ChevronRight
               className="text-on-surface-variant size-5 shrink-0"

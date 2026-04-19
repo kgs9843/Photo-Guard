@@ -1,18 +1,18 @@
 import { ChevronRight } from 'lucide-react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { getAllCleanedRecords } from '@/pages/history/model/cleanedHistoryDb'
 import { HISTORY_UPDATED_EVENT } from '@/pages/history/model/historyEvents'
-import {
-  cleanedBadgeLabel,
-  historySectionCopy,
-} from '@/pages/history/model/historyMock'
+import { getHistoryListCopy } from '@/pages/history/model/historyListCopy'
 import { cleanedStoredToHistoryRecord } from '@/pages/history/model/historyRecordsUi'
 import type { HistoryRecord } from '@/pages/history/model/types'
+import { useLocale } from '@/shared/lib/useLocale'
 
 const HistoryPage = () => {
   const navigate = useNavigate()
+  const { locale } = useLocale()
+  const listCopy = useMemo(() => getHistoryListCopy(locale), [locale])
   const [records, setRecords] = useState<HistoryRecord[]>([])
   const [ready, setReady] = useState(false)
   const objectUrlsRef = useRef<string[]>([])
@@ -66,20 +66,20 @@ const HistoryPage = () => {
     <div className="space-y-8 pb-8">
       <section>
         <h2 className="text-on-surface mb-2 text-2xl font-bold tracking-tight">
-          {historySectionCopy.title}
+          {listCopy.section.title}
         </h2>
         <p className="text-on-surface-variant text-base leading-relaxed">
-          {historySectionCopy.description}
+          {listCopy.section.description}
         </p>
       </section>
 
       {empty ? (
         <div className="border-outline-variant/10 bg-surface-container-lowest rounded-xl border p-8 text-center shadow-sm">
           <p className="text-on-surface mb-2 font-bold">
-            {historySectionCopy.emptyTitle}
+            {listCopy.section.emptyTitle}
           </p>
           <p className="text-on-surface-variant text-sm leading-relaxed">
-            {historySectionCopy.emptyBody}
+            {listCopy.section.emptyBody}
           </p>
         </div>
       ) : null}
@@ -122,7 +122,7 @@ const HistoryPage = () => {
               <div className="flex shrink-0 flex-col items-end gap-2">
                 <span className="bg-primary-fixed text-primary rounded-full px-3 py-1 text-[10px] font-bold tracking-wider uppercase">
                   {record.status === 'cleaned'
-                    ? cleanedBadgeLabel
+                    ? listCopy.cleanedBadgeLabel
                     : record.status}
                 </span>
                 <ChevronRight

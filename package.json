@@ -11,8 +11,19 @@
     "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md,css}\"",
     "type-check": "tsc --noEmit",
+    "verify": "node scripts/verify-task.mjs",
+    "exec-plan-init": "node scripts/exec-plan-init.mjs",
     "preview": "vite preview",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix --max-warnings 0",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "exifr": "^7.1.3",

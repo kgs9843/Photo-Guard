@@ -1,15 +1,20 @@
 import { ArrowLeft } from 'lucide-react'
-import { Fragment } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import TopBar from '@/app/layout/TopBar'
 import {
+  getLicensesPageCopy,
   licenseEntries,
-  licensesPageCopy,
 } from '@/pages/licenses/model/licensesCopy'
+import { getShellCopy } from '@/shared/lib/shellCopy'
+import { useLocale } from '@/shared/lib/useLocale'
 
 const OpenSourceLicensesPage = () => {
   const navigate = useNavigate()
+  const { locale } = useLocale()
+  const shell = useMemo(() => getShellCopy(locale), [locale])
+  const page = useMemo(() => getLicensesPageCopy(locale), [locale])
 
   return (
     <div className="bg-surface text-on-surface min-h-dvh antialiased">
@@ -19,14 +24,14 @@ const OpenSourceLicensesPage = () => {
             type="button"
             onClick={() => navigate(-1)}
             className="text-primary -ml-1 rounded-xl p-2 transition-opacity hover:opacity-80 active:scale-95"
-            aria-label="뒤로"
+            aria-label={shell.backAria}
           >
             <ArrowLeft className="size-6" aria-hidden strokeWidth={2} />
           </button>
         }
         title={
           <h1 className="text-on-surface max-w-full font-['Manrope',sans-serif] text-base font-semibold tracking-tight text-pretty wrap-break-word sm:text-lg">
-            {licensesPageCopy.topBarTitle}
+            {page.topBarTitle}
           </h1>
         }
         right={<span className="inline-block w-10 shrink-0" aria-hidden />}
@@ -35,7 +40,7 @@ const OpenSourceLicensesPage = () => {
       <main className="mx-auto max-w-2xl space-y-6 px-6 pt-24 pb-12 md:px-6">
         <div className="px-2">
           <p className="text-on-surface-variant text-base leading-relaxed">
-            {licensesPageCopy.intro}
+            {page.intro}
           </p>
         </div>
 
@@ -49,23 +54,21 @@ const OpenSourceLicensesPage = () => {
                 <h2 className="text-on-surface text-lg font-medium tracking-tight">
                   {entry.name}
                 </h2>
-                <span className="bg-surface-container-highest text-on-surface-variant shrink-0 rounded-full px-3 py-1 text-xs font-bold tracking-wide uppercase">
+                <span className="bg-primary-fixed/40 text-primary shrink-0 rounded-md px-2 py-0.5 text-xs font-bold">
                   {entry.licenseBadge}
                 </span>
               </div>
-              <p className="text-on-surface-variant text-sm leading-relaxed break-all">
+              <div className="text-on-surface-variant font-mono text-xs leading-relaxed break-all">
                 {entry.lines.map((line, i) => (
                   <Fragment key={`${entry.name}-${i}`}>
                     {i > 0 ? <br /> : null}
                     {line}
                   </Fragment>
                 ))}
-              </p>
+              </div>
             </article>
           ))}
         </div>
-
-        <div className="h-12 shrink-0" aria-hidden />
       </main>
     </div>
   )

@@ -1,0 +1,40 @@
+export const cleanCopyKo = {
+  loading: '메타데이터를 읽는 중…',
+  metadataUnavailable: '메타데이터를 찾을 수 없거나 읽을 수 없습니다.',
+  labels: {
+    gps: '위치 (GPS)',
+    device: '기기 정보',
+    captureTime: '촬영 시각',
+    shooting: '촬영 정보',
+  },
+  multiHints: {
+    gps: '선택한 사진 중 일부에 위치 좌표가 포함되어 있습니다.',
+    device: '선택한 사진에 기기 관련 메타데이터가 있습니다.',
+    captureTime: '선택한 사진에 촬영 시각 정보가 있습니다.',
+    shooting: '선택한 사진에 노출·ISO·렌즈 등 촬영 메타데이터가 있습니다.',
+  },
+  stackExtraAlt: '선택한 사진',
+  stackExtraLabel: '사진',
+  empty: {
+    back: '뒤로',
+    title: '선택된 사진이 없습니다',
+    body: '대시보드에서 사진을 선택해 주세요.',
+  },
+  topBarBackAria: '뒤로',
+  selectedMany: (n: number) => `${n}장 선택`,
+  selectedOne: '1장 선택',
+  heroMulti: (n: number) => `사진 ${n}장`,
+  heroSingleMeta: (count: number) => `메타데이터 ${count}개 항목`,
+  analyzing: '메타데이터를 분석하는 중…',
+  multiRiskLine: (signals: number) =>
+    `선택에 개인정보 관련 신호 ${signals}개가 감지되었습니다.`,
+  singleRiskYes: '개인정보와 관련될 수 있는 메타데이터가 있습니다.',
+  singleRiskNo: '높은 위험도의 메타데이터는 감지되지 않았습니다.',
+  sectionRisk: '위험 분석',
+  sectionDetail: '상세 정보',
+  disclaimer:
+    '* 메타데이터를 삭제하면 촬영 위치·기기 정보 등이 영구적으로 가려질 수 있습니다.',
+  ctaAria: '메타데이터 삭제',
+  ctaMulti: '모든 사진 메타데이터 삭제',
+  ctaSingle: '선택한 메타데이터 삭제',
+} as const

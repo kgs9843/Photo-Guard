@@ -31,3 +31,5 @@ src/
 | shared    | 없음                                       |
 
 슬라이스별 `ui` / `model` / `api` 폴더 템플릿은 프로젝트 스킬 `.cursor/skills/fsd-slices/SKILL.md`를 읽고 따른다.
+
+배경·현재 `src/` 트리 요약·크로스 슬라이스 메모는 **`docs/architecture/README.md`** 를 본다.

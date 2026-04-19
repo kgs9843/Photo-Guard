@@ -1,7 +1,10 @@
 import { ArrowLeft, History, Home, Settings } from 'lucide-react'
+import { useMemo } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 
 import TopBar from '@/app/layout/TopBar'
+import { getShellCopy } from '@/shared/lib/shellCopy'
+import { useLocale } from '@/shared/lib/useLocale'
 
 const HISTORY_DETAIL_PATH = /^\/history\/[^/]+$/
 
@@ -19,23 +22,32 @@ type HeaderState = {
   titlePrimary: boolean
 }
 
-const headerState = (pathname: string): HeaderState => {
+const headerState = (
+  pathname: string,
+  shell: ReturnType<typeof getShellCopy>
+): HeaderState => {
   if (HISTORY_DETAIL_PATH.test(pathname)) {
-    return { text: '보호된 사진 정보', gradient: false, titlePrimary: false }
+    return {
+      text: shell.headerHistoryDetail,
+      gradient: false,
+      titlePrimary: false,
+    }
   }
   if (pathname === '/settings') {
-    return { text: '설정', gradient: false, titlePrimary: false }
+    return { text: shell.headerSettings, gradient: false, titlePrimary: false }
   }
   if (pathname === '/history') {
-    return { text: '기록', gradient: false, titlePrimary: false }
+    return { text: shell.headerHistory, gradient: false, titlePrimary: false }
   }
-  return { text: 'Photo Guard', gradient: true, titlePrimary: false }
+  return { text: shell.headerPhotoGuard, gradient: true, titlePrimary: false }
 }
 
 const AppShell = () => {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { text, gradient, titlePrimary } = headerState(pathname)
+  const { locale } = useLocale()
+  const shell = useMemo(() => getShellCopy(locale), [locale])
+  const { text, gradient, titlePrimary } = headerState(pathname, shell)
   const isHistoryDetail = HISTORY_DETAIL_PATH.test(pathname)
 
   return (
@@ -47,7 +59,7 @@ const AppShell = () => {
               type="button"
               onClick={() => navigate('/history')}
               className="text-primary hover:bg-surface-container-low -ml-1 rounded-full p-2 transition-colors active:scale-95"
-              aria-label="뒤로"
+              aria-label={shell.backAria}
             >
               <ArrowLeft className="size-6" aria-hidden strokeWidth={2} />
             </button>
@@ -96,7 +108,7 @@ const AppShell = () => {
                 strokeWidth={isActive ? 2.5 : 2}
               />
               <span className="font-['Manrope',sans-serif] text-[12px] font-bold">
-                홈
+                {shell.tabHome}
               </span>
             </>
           )}
@@ -110,7 +122,7 @@ const AppShell = () => {
                 strokeWidth={isActive ? 2.5 : 2}
               />
               <span className="font-['Manrope',sans-serif] text-[12px] font-bold">
-                기록
+                {shell.tabHistory}
               </span>
             </>
           )}
@@ -124,7 +136,7 @@ const AppShell = () => {
                 strokeWidth={isActive ? 2.5 : 2}
               />
               <span className="font-['Manrope',sans-serif] text-[12px] font-bold">
-                설정
+                {shell.tabSettings}
               </span>
             </>
           )}

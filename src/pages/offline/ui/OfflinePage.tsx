@@ -1,9 +1,15 @@
 import { RefreshCcw, Shield, WifiOff } from 'lucide-react'
+import { useMemo } from 'react'
 
 import TopBar from '@/app/layout/TopBar'
+import { getOfflineCopy } from '@/pages/offline/model/offlineCopy'
+import { useLocale } from '@/shared/lib/useLocale'
 import GradientButton from '@/shared/ui/GradientButton'
 
 const OfflinePage = () => {
+  const { locale } = useLocale()
+  const copy = useMemo(() => getOfflineCopy(locale), [locale])
+
   return (
     <div className="bg-surface text-on-surface flex min-h-dvh flex-col antialiased">
       <TopBar
@@ -11,7 +17,7 @@ const OfflinePage = () => {
           <div className="flex items-center gap-3">
             <Shield className="text-primary size-6 shrink-0" aria-hidden />
             <h1 className="from-primary to-primary-container bg-linear-to-br bg-clip-text font-['Manrope',sans-serif] text-xl font-bold tracking-tight text-transparent">
-              포토 가드
+              {copy.brand}
             </h1>
           </div>
         }
@@ -32,17 +38,17 @@ const OfflinePage = () => {
 
         <div className="mb-12 w-full">
           <h2 className="text-on-surface mb-3 text-[1.5rem] font-bold tracking-tight">
-            인터넷 연결을 확인해주세요
+            {copy.title}
           </h2>
           <p className="text-on-surface-variant text-[1rem] leading-[1.6]">
-            네트워크 연결이 원활하지 않아
+            {copy.bodyLine1}
             <br />
-            정보를 불러올 수 없습니다.
+            {copy.bodyLine2}
           </p>
         </div>
 
         <GradientButton
-          ariaLabel="Retry"
+          ariaLabel={copy.retryAria}
           onClick={() => {
             try {
               window.location.reload()
@@ -54,7 +60,7 @@ const OfflinePage = () => {
         >
           <span className="inline-flex items-center justify-center gap-2">
             <RefreshCcw className="size-5" aria-hidden />
-            다시 시도하기
+            {copy.retry}
           </span>
         </GradientButton>
       </main>
