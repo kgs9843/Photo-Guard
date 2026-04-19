@@ -6,8 +6,14 @@
 
 - `docs/architecture/README.md`: FSD 배경, **실제 `src/` 트리**, 규칙은 `fsd-core.mdc`로 링크
 - `docs/product/README.md`: Photo Guard 한 줄, 사용자 여정, 용어, 수용 기준 요약
-- `docs/exec-plans/README.md`: 실행 계획(active/completed), worktree·포트·로그, `scripts/exec-plan-init.sh`
+- `docs/exec-plans/README.md`: 실행 계획(active/completed), worktree·포트·로그, `exec-plan-init`
+- `docs/workflows/README.md`: PR 등 워크플로 — **`npm run pr:open`**, **`pull-request-template.md`가 PR 본문 SoT**
+- `docs/workflows/code-review.md`: 로컬 `verify` vs 사람·AI 리뷰
+- `docs/workflows/pr-bodies/README.md`: **`pr-open.sh`로 실제 올린 PR 본문 아카이브**(채운 body 사용 시 자동 저장)
+- `docs/design/README.md`: UI/디자인 — **`design-system.md`가 SoT** (`.cursor/rules/design.mdc`와 동일 내용 축)
 - `docs/references/README.md`: 외부 문서/근거 고정(예: Context7 조회 결과)
+
+에이전트용 한 페이지 지도는 루트 **`AGENTS.md`**(문서 목차 표 포함)를 병행합니다.
 
 ## 운영 원칙(짧게)
 

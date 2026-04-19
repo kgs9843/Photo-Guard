@@ -153,4 +153,6 @@ console.log('Next:')
 console.log(`  cd "${wtPath}"`)
 console.log('  npm install')
 console.log(`  npm run dev -- --port ${port}`)
-console.log(`Optional (gh): bash scripts/pr-open.sh ${branch}`)
+console.log(
+  `Optional (PR): npm run pr:open -- ${branch}   (또는 bash scripts/pr-open.sh; 본문: docs/workflows/pull-request-template.md)`
+)

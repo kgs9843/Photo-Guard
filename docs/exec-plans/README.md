@@ -23,4 +23,4 @@ Git Bash / macOS / Linux:
 bash scripts/exec-plan-init.sh <slug>
 ```
 
-`gh` CLI가 있으면 PR 초안까지 열 수 있습니다(스크립트 주석·`scripts/pr-open.sh` 참고).
+`gh` CLI가 있으면 PR 초안까지 열 수 있습니다(`npm run pr:open` — 본문은 [`docs/workflows/pull-request-template.md`](../workflows/pull-request-template.md) SoT).

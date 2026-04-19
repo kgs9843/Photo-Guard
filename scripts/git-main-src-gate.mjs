@@ -3,6 +3,9 @@
  * 머지·체리픽 등 Git이 자동으로 스테이징하는 경우는 예외입니다.
  *
  * 우회(긴급만): HUSKY_ALLOW_MAIN_SRC=1
+ * $env:HUSKY_ALLOW_MAIN_SRC = '1'; git commit -m "여기에 메시지"
+ * 끝나고 다시 삭제
+ * Remove-Item Env:\HUSKY_ALLOW_MAIN_SRC
  */
 import { execSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -11,8 +14,6 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
-
-const HUSKY_ALLOW_MAIN_SRC = 1
 
 function sh(cmd, opts = {}) {
   return execSync(cmd, {

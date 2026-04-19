@@ -13,6 +13,7 @@
     "type-check": "tsc --noEmit",
     "verify": "node scripts/verify-task.mjs",
     "exec-plan-init": "node scripts/exec-plan-init.mjs",
+    "pr:open": "node scripts/pr-open.mjs",
     "preview": "vite preview",
     "prepare": "husky"
   },
