@@ -34,7 +34,7 @@ Cursor 규칙(요약·자동 적용): `.cursor/rules/project-constraints.mdc`, `
 
 2. **워크트리에서 구현** — `cd` 해당 경로 후 `npm install`, `npm run dev -- --port $(cat .dev-port)` 등(Git Bash). PowerShell은 `Get-Content .dev-port`로 포트 읽기. **병합 전까지 `main`에 직접 푸시하지 않습니다.**
 
-3. **검증** — `npm run verify` (`scripts/verify-task.mjs`): ESLint, Prettier, `tsc`, 빌드, FSD(`shared`가 상위 레이어 import 금지). **커밋 훅(pre-commit)**에서 순차 적용됩니다(아래 **Husky**). 푸시 직전에는 같은 검사를 다시 하지 않습니다(이중 방지); 원격은 **CI**가 맡습니다.
+3. **검증** — `npm run verify`: ESLint, **전역** Prettier(`format:check`), `tsc`, 빌드, FSD. PR 전·CI·수동에 사용. **`format:check`만 실패할 때** 다른 결론으로 넘어가지 말고, **`npm run format`**(Prettier `--write`, `format:check`와 동일 파일 범위)으로 맞춘 뒤 **`npm run verify`를 다시** 실행한다. **커밋 훅**은 `lint-staged`로 스테이징 포맷 후 **`verify`의 precommit 모드**(전역 Prettier 생략, 나머지 동일)만 돌립니다(아래 **Husky**). 푸시 훅은 없음; 원격은 **CI**가 전역 `verify` 축을 맡습니다.
 
 4. **커밋 → PR → 머지 → 정리** — Conventional Commits 권장(`feat:`, `fix:`, `chore:` 등). **PR:** 커밋 후 저장소 루트에서 **`npm run pr:open`** — 기본으로 **`npm run verify` 다음** `git push` + `gh pr create`(본문은 SoT 템플릿 또는 `npm run pr:open -- pr-body.local.md`처럼 채운 md). 검증 생략은 `-- --skip-verify`. 성공 시 채운 본문을 넘긴 경우 [`docs/workflows/pr-bodies/`](docs/workflows/pr-bodies/)에 아카이브되며, **원격 기록으로 남기려면 그 파일을 커밋**합니다. 템플릿만 쓰고도 아카이브하려면 `PR_BODY_ARCHIVE=1`. Git Bash에서는 `bash scripts/pr-open.sh`(동일 동작). **머지·워크트리 정리**는 GitHub/사람 판단(`gh pr merge`, `pr-merge-complete.sh`). 사람·팀 **코드 리뷰**는 PR에서 진행; 로컬 기계 검증만은 [`docs/workflows/code-review.md`](docs/workflows/code-review.md) 참고.
 
@@ -44,13 +44,13 @@ Cursor 규칙(요약·자동 적용): `.cursor/rules/project-constraints.mdc`, `
 
 - **PR 전:** [`docs/workflows/pull-request-template.md`](docs/workflows/pull-request-template.md) 형식으로 본문을 채운 파일(예: 루트 `pr-body.local.md`)을 만든 뒤 **`npm run pr:open -- <브랜치> pr-body.local.md`** 또는 현재 브랜치면 **`npm run pr:open -- pr-body.local.md`**. 인자 없이 `npm run pr:open`만 하면 SoT 템플릿 원문이 올라가므로 **에이전트는 채운 파일을 넘기는 것을 기본**으로 한다.
 - **1 → 2**: `exec-plan-init`가 끝나지 않았거나 워크트리 경로가 없으면, `src/` 구현 단계로 가지 않습니다.
-- **2 → 3**: `npm run verify`가 통과하지 않으면 커밋/푸시로 넘기지 않습니다(로컬에서 먼저 고침).
+- **2 → 3**: `npm run verify`가 통과하지 않으면 커밋/푸시로 넘기지 않습니다(로컬에서 먼저 고침). 로그에 **`format:check` / Prettier**만 깨졌다면 **`npm run format` → `npm run verify` 재시도**를 먼저 끝내고(필요하면 같은 루프 반복), 그다음 단계(ESLint·타입·빌드·FSD 등) 실패를 처리합니다. 여기서 중단·우회만 하지 않습니다.
 - **`--no-verify` 금지(원칙)**: 커밋을 훅 없이 밀어 넣지 않습니다(푸시 훅은 사용하지 않음). 예외가 필요하면 사람이 명시적으로 결정합니다.
 - **우회 환경변수**는 긴급·인프라 작업에만: `main`에 `src/`를 직접 커밋해야 할 때만 `HUSKY_ALLOW_MAIN_SRC=1`(Unix) / `set HUSKY_ALLOW_MAIN_SRC=1` 후 커밋(PowerShell은 `$env:HUSKY_ALLOW_MAIN_SRC=1`).
 
 ## Husky(실패 시 다음 단계 차단)
 
-- **pre-commit** (`node scripts/husky-pre-commit.mjs`): **1)** `lint-staged` → 실패 시 종료 → **2)** `main`에서 `src/` 직접 커밋 차단(`node scripts/git-main-src-gate.mjs`, 머지·리베이스·체리픽·리버트 진행 중은 예외) → **3)** `npm run verify`. 앞 단계가 실패하면 뒤 단계는 실행되지 않습니다.
+- **pre-commit** (`node scripts/husky-pre-commit.mjs`): **1)** `lint-staged`(스테이징 파일 ESLint·Prettier) → **2)** `main`에서 `src/` 직접 커밋 차단(`node scripts/git-main-src-gate.mjs`, 머지·리베이스·체리픽·리버트 진행 중은 예외) → **3)** `node scripts/verify-task.mjs --precommit`(전역 `prettier --check` 제외 — 스테이징은 1단계에서 이미 맞춤; `lint`·`type-check`·`build`·FSD는 전부 실행). 앞 단계가 실패하면 뒤 단계는 실행되지 않습니다.
 - **pre-push**: 사용하지 않음(위 `verify`와 중복이라 제거). `git push`는 훅 검사 없이 진행되며, **`--no-verify`로 넘긴 커밋**도 푸시 단계에서 추가로 막지 않습니다. 대신 **CI**에서 `verify`가 돕니다.
 - **CI**: GitHub Actions의 `verify`와 동일한 축으로 맞춥니다.
 

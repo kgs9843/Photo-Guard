@@ -12,6 +12,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md,css}\"",
     "type-check": "tsc --noEmit",
     "verify": "node scripts/verify-task.mjs",
+    "verify:precommit": "node scripts/verify-task.mjs --precommit",
     "exec-plan-init": "node scripts/exec-plan-init.mjs",
     "pr:open": "node scripts/pr-open.mjs",
     "preview": "vite preview",
