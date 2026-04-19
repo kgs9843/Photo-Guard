@@ -17,6 +17,7 @@ export const cleaningCopyEn = {
   sublineNoPhotos: 'No photos selected.',
   failedLine: (n: number) => `Could not process ${n} file(s).`,
   statusCardLabel: 'Status',
+  removedSectionTitle: 'Removed metadata',
   statusDataDone: 'Data protection complete',
   cardGpsLabel: 'GPS metadata',
   cardDeviceLabel: 'Device fingerprint',
