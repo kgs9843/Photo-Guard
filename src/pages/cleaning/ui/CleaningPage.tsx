@@ -10,7 +10,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import TopBar from '@/app/layout/TopBar'
+import { getCleanCopy } from '@/pages/clean/model/cleanCopy'
 import { extractPhotoMetadata } from '@/pages/clean/model/extractMetadata'
+import type { PhotoMetadata } from '@/pages/clean/model/types'
 import {
   type CleaningUiCopy,
   getCleaningCopy,
@@ -24,6 +26,7 @@ import {
 import { useLocale } from '@/shared/lib/useLocale'
 import GradientButton from '@/shared/ui/GradientButton'
 
+import { cleaningDiscoveredMetadataHasRows } from '../model/cleaningDiscoveredMetadataRows'
 import { buildRemovalEvidence } from '../model/removalEvidence'
 import { stripImageMetadata } from '../model/stripMetadata'
 import type {
@@ -31,6 +34,7 @@ import type {
   CleaningProgress,
   CleaningResultItem,
 } from '../model/types'
+import { CleaningDiscoveredMetadataList } from './CleaningDiscoveredMetadataList'
 
 type LocationState = CleaningJob
 
@@ -76,6 +80,7 @@ const CleaningPage = () => {
   const location = useLocation()
   const { locale } = useLocale()
   const copy = useMemo(() => getCleaningCopy(locale), [locale])
+  const cleanCopy = useMemo(() => getCleanCopy(locale), [locale])
   const state = (location.state ?? null) as LocationState | null
 
   const photos = useMemo(() => state?.photos ?? [], [state])
@@ -85,6 +90,9 @@ const CleaningPage = () => {
     progressFrom(0, total, copy.progress)
   )
   const [results, setResults] = useState<CleaningResultItem[] | null>(null)
+  const [discoveredMetas, setDiscoveredMetas] = useState<
+    PhotoMetadata[] | null
+  >(null)
   const [failedCount, setFailedCount] = useState(0)
   const cleaningRunIdRef = useRef(0)
 
@@ -96,17 +104,20 @@ const CleaningPage = () => {
       if (photos.length === 0) {
         if (runId !== cleaningRunIdRef.current) return
         setResults([])
+        setDiscoveredMetas([])
         setProgress(progressFrom(0, 0, copy.progress))
         return
       }
 
       const out: CleaningResultItem[] = []
+      const collectedMetas: PhotoMetadata[] = []
       let done = 0
       let failed = 0
       let historyWrites = 0
       const outputMime = exportFormatMime(getExportFormat())
 
       setResults(null)
+      setDiscoveredMetas(null)
       setFailedCount(0)
       setProgress(progressFrom(0, photos.length, copy.progress))
 
@@ -114,6 +125,7 @@ const CleaningPage = () => {
         if (cancelled || runId !== cleaningRunIdRef.current) return
         try {
           const meta = await extractPhotoMetadata(photo)
+          collectedMetas.push(meta)
           if (cancelled || runId !== cleaningRunIdRef.current) return
           const { removed, lines, otherTagDetails } =
             await buildRemovalEvidence(photo.file, meta)
@@ -158,6 +170,7 @@ const CleaningPage = () => {
 
       if (!cancelled && runId === cleaningRunIdRef.current) {
         setResults(out)
+        setDiscoveredMetas(collectedMetas)
         if (historyWrites > 0) {
           dispatchHistoryUpdated()
         }
@@ -191,6 +204,11 @@ const CleaningPage = () => {
         ? copy.sublineDone(progress.total)
         : copy.sublineRunning(progress.total, progress.done)
       : copy.sublineNoPhotos
+
+  const showRemovedMetadataSection =
+    isDone &&
+    discoveredMetas !== null &&
+    cleaningDiscoveredMetadataHasRows(total > 1, discoveredMetas)
 
   return (
     <div className="bg-surface text-on-surface flex min-h-dvh flex-col">
@@ -295,31 +313,48 @@ const CleaningPage = () => {
               </div>
             </div>
 
-            <div className="border-outline-variant/5 bg-surface-container-low rounded-[1.5rem] border p-5">
-              <MapPinOff
-                className="text-tertiary-container/50 mb-3 size-6"
-                aria-hidden
-              />
-              <p className="text-on-surface-variant/40 text-[10px] font-bold tracking-tighter uppercase">
-                {copy.cardGpsLabel}
-              </p>
-              <p className="text-on-surface font-extrabold">
-                {isDone ? copy.cardValueRemoved : copy.cardValueWaiting}
-              </p>
-            </div>
+            {showRemovedMetadataSection && discoveredMetas ? (
+              <div className="col-span-2 space-y-3">
+                <h3 className="text-on-surface-variant px-1 text-sm font-bold tracking-wide">
+                  {copy.removedSectionTitle}
+                </h3>
+                <div className="grid grid-cols-1 gap-3">
+                  <CleaningDiscoveredMetadataList
+                    isMulti={total > 1}
+                    metas={discoveredMetas}
+                    cleanCopy={cleanCopy}
+                  />
+                </div>
+              </div>
+            ) : !isDone ? (
+              <>
+                <div className="border-outline-variant/5 bg-surface-container-low rounded-[1.5rem] border p-5">
+                  <MapPinOff
+                    className="text-tertiary-container/50 mb-3 size-6"
+                    aria-hidden
+                  />
+                  <p className="text-on-surface-variant/40 text-[10px] font-bold tracking-tighter uppercase">
+                    {copy.cardGpsLabel}
+                  </p>
+                  <p className="text-on-surface font-extrabold">
+                    {copy.cardValueWaiting}
+                  </p>
+                </div>
 
-            <div className="border-outline-variant/5 bg-surface-container-low rounded-[1.5rem] border p-5">
-              <Smartphone
-                className="text-secondary/50 mb-3 size-6"
-                aria-hidden
-              />
-              <p className="text-on-surface-variant/40 text-[10px] font-bold tracking-tighter uppercase">
-                {copy.cardDeviceLabel}
-              </p>
-              <p className="text-on-surface font-extrabold">
-                {isDone ? copy.cardValueCleaned : copy.cardValuePending}
-              </p>
-            </div>
+                <div className="border-outline-variant/5 bg-surface-container-low rounded-[1.5rem] border p-5">
+                  <Smartphone
+                    className="text-secondary/50 mb-3 size-6"
+                    aria-hidden
+                  />
+                  <p className="text-on-surface-variant/40 text-[10px] font-bold tracking-tighter uppercase">
+                    {copy.cardDeviceLabel}
+                  </p>
+                  <p className="text-on-surface font-extrabold">
+                    {copy.cardValuePending}
+                  </p>
+                </div>
+              </>
+            ) : null}
           </div>
 
           <div className="mt-auto w-full space-y-3">

@@ -17,6 +17,7 @@ export const cleaningCopyKo = {
   sublineNoPhotos: '선택된 사진이 없습니다.',
   failedLine: (n: number) => `${n}장을 처리하지 못했습니다.`,
   statusCardLabel: '상태',
+  removedSectionTitle: '제거된 메타데이터',
   statusDataDone: '데이터 보호 완료',
   cardGpsLabel: 'GPS 메타데이터',
   cardDeviceLabel: '기기 식별',
