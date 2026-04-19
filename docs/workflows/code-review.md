@@ -4,7 +4,7 @@
 
 - **`npm run verify`** — ESLint, Prettier, TypeScript, 프로덕션 빌드, FSD 경계. **스타일·타입·빌드 깨짐**을 잡는 데 가깝고, **설계·요구사항 적합성**은 다루지 않습니다.
 - **`npm run pr:open`** — 기본적으로 PR을 열기 **전에** 위 `verify`를 한 번 더 돌립니다(건너뛰기: `-- --skip-verify`).
-- **Husky** — 커밋/푸시 전에 위 검증을 다시 돌릴 수 있습니다.
+- **Husky** — **커밋(pre-commit)** 시 `lint-staged`·게이트·`verify`를 돌립니다. 푸시 전 동일 검사는 두지 않습니다.
 
 즉 “리뷰”라기보다 **자동 점검(gate)** 입니다.
 
