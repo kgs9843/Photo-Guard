@@ -42,6 +42,9 @@
 
 변경 사항에 대한 스크린샷을 추가해주세요.
 
+- **사람:** 로컬에서 `npm run dev` 등으로 띄운 뒤 캡처해 PR에 이미지로 붙이거나, 레포에 넣을 경로(예: `docs/references/…`)를 정한 뒤 PR 본문에 링크합니다.
+- **에이전트(Cursor 등):** 샌드박스만으로는 사용자 브라우저를 대신 켜기 어렵습니다. **Playwright MCP**를 쓰는 경우에는 프로젝트 스킬 **`.cursor/skills/playwright-mcp-screenshots/SKILL.md`** 를 읽고, MCP 도구 스키마에 맞춰 로컬 dev URL로 캡처한 뒤 레포 경로에 PNG를 저장·PR에 링크합니다. MCP가 없으면 (1) 스크린샷 섹션에 **“로컬에서 확인: …경로”** 한 줄로 대체, (2) 레포에 **Playwright CLI 스크립트**를 두고 `npx playwright screenshot …`로 생성·커밋하는 흐름을 씁니다.
+
 ## 📝 추가 정보
 
 리뷰어가 알아야 할 추가 정보가 있다면 작성해주세요.

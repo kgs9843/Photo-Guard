@@ -5,7 +5,7 @@
 ## 디렉터리
 
 - `active/`: 진행 중인 실행 계획 본문(템플릿 채운 마크다운)
-- `completed/`: 완료 후 아카이브(선택)
+- `completed/`: 완료 후 아카이브(선택). **`npm run pr:open`**(또는 `node scripts/pr-open.mjs`)으로 PR이 만들어지면, 브랜치가 `exec-plan/<slug>`이고 `active/exec-plan-<slug>.md`가 있을 때 **자동으로** `completed/`로 옮기고 하단에 PR 링크·시각(UTC)을 덧붙입니다. 생략하려면 `EXEC_PLAN_NO_MOVE=1`.
 
 워크트리 전용 `EXEC_PLAN.md`는 `exec-plan-init`(Node 또는 셸)이 워크트리 루트에도 복사해 둡니다.
 

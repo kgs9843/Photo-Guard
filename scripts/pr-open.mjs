@@ -7,6 +7,7 @@
  *   npm run pr:open -- pr-body.local.md
  *
  * 환경변수: PR_BODY_ARCHIVE=1 (SoT 템플릿만 써도 pr-bodies 아카이브)
+ * EXEC_PLAN_NO_MOVE=1 이면 exec-plan/<slug> 브랜치여도 active → completed 이동 생략
  */
 import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
@@ -101,6 +102,49 @@ function bodySourceForYaml(bodyPath) {
   return bodyPath
 }
 
+/** 브랜치 `exec-plan/<slug>` 이고 `docs/exec-plans/active/exec-plan-<slug>.md` 가 있으면 completed 로 옮김 */
+function maybeMoveExecPlanToCompleted(branchName, prUrl) {
+  if (process.env.EXEC_PLAN_NO_MOVE === '1') return
+  const m = /^exec-plan\/(.+)$/.exec(branchName)
+  if (!m) return
+  const slug = m[1]
+  if (!/^[a-zA-Z0-9._-]+$/.test(slug)) return
+  const activePath = path.join(
+    root,
+    'docs',
+    'exec-plans',
+    'active',
+    `exec-plan-${slug}.md`
+  )
+  if (!fs.existsSync(activePath)) {
+    console.error(
+      `[pr-open] exec-plan active not found (skip move): docs/exec-plans/active/exec-plan-${slug}.md`
+    )
+    return
+  }
+  const completedDir = path.join(root, 'docs', 'exec-plans', 'completed')
+  fs.mkdirSync(completedDir, { recursive: true })
+  const destPath = path.join(completedDir, `exec-plan-${slug}.md`)
+  let text = fs.readFileSync(activePath, 'utf8')
+  text += [
+    '',
+    '---',
+    '',
+    '## PR 생성됨 (`pr-open` 자동 기록)',
+    '',
+    `- **archived_at (UTC):** ${utcIsoSeconds()}`,
+    prUrl
+      ? `- **PR:** ${prUrl}`
+      : '- **PR:** (URL 확인: `gh pr list --head ' + branchName + '`)',
+    '',
+  ].join('\n')
+  fs.writeFileSync(destPath, text, 'utf8')
+  fs.unlinkSync(activePath)
+  console.error(
+    `[pr-open] exec plan moved: docs/exec-plans/active/exec-plan-${slug}.md → docs/exec-plans/completed/`
+  )
+}
+
 function parseArgs(argv) {
   const skipVerify = argv.includes('--skip-verify')
   const raw = argv.filter(a => a !== '--skip-verify')
@@ -154,8 +198,7 @@ if (!fs.existsSync(bodyPath)) {
   process.exit(1)
 }
 
-const shouldArchive =
-  Boolean(bodyArg) || process.env.PR_BODY_ARCHIVE === '1'
+const shouldArchive = Boolean(bodyArg) || process.env.PR_BODY_ARCHIVE === '1'
 
 run('git', ['push', '-u', 'origin', branch])
 run('gh', [
@@ -169,13 +212,16 @@ run('gh', [
   bodyPath,
 ])
 
+const prUrlAfterCreate = ghPrUrl(branch)
+maybeMoveExecPlanToCompleted(branch, prUrlAfterCreate)
+
 if (shouldArchive) {
   const archiveDir = path.join(root, 'docs', 'workflows', 'pr-bodies')
   fs.mkdirSync(archiveDir, { recursive: true })
   const stamp = utcStampForFilename()
   const safeBranch = branch.replace(/\//g, '-')
   const archivePath = path.join(archiveDir, `${stamp}-${safeBranch}.md`)
-  const prUrl = ghPrUrl(branch)
+  const prUrl = prUrlAfterCreate || ghPrUrl(branch)
   const bodyText = fs.readFileSync(bodyPath, 'utf8')
   const meta = [
     '---',
