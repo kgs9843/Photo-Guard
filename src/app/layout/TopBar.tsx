@@ -7,7 +7,7 @@ type TopBarProps = {
 }
 
 const barBase =
-  'bg-surface-container-lowest/80 fixed top-0 z-50 min-h-[68px] w-full items-center px-4 py-4 shadow-sm backdrop-blur-md sm:px-6'
+  'bg-surface-container-lowest/80 fixed top-0 z-50 min-h-[68px] w-full items-center py-4 pl-5 pr-4 shadow-sm backdrop-blur-md sm:pl-7 sm:pr-6'
 
 const TopBar = ({ left, title, right }: TopBarProps) => {
   if (title) {
