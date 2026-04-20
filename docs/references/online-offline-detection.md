@@ -1,10 +1,7 @@
-# Online/offline detection (official references)
+# Online/offline (historical note)
 
-- MDN: `navigator.onLine` — https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine
-- MDN: `online` event — https://developer.mozilla.org/en-US/docs/Web/API/Window/online_event
+**2026-04:** 웹 앱에서는 전용 오프라인 전체 화면을 두지 않는다. 오프라인 UX는 네이티브 셸에서 처리한다.
+
+이전 구현에서 쓰던 브라우저 이벤트 참고만 남긴다.
+
 - MDN: `offline` event — https://developer.mozilla.org/en-US/docs/Web/API/Window/offline_event
-
-Notes:
-
-- `navigator.onLine` is a heuristic and may not guarantee actual internet reachability.
-- For a stronger check, ping a known endpoint; this project uses the heuristic per requirements.

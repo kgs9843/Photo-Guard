@@ -20,7 +20,7 @@
 
 ```
 src/
-├── app/          # 셸, 프로바이더 (라우팅 래퍼·온라인 경계 등)
+├── app/          # 셸, 프로바이더 (라우팅 래퍼 등)
 ├── pages/        # 기능 단위 슬라이스 (라우트 단위 페이지)
 │   ├── dashboard/
 │   ├── clean/
@@ -28,8 +28,7 @@ src/
 │   ├── history/
 │   ├── settings/
 │   ├── privacy/
-│   ├── licenses/
-│   └── offline/
+│   └── licenses/
 └── shared/       # 공용 UI·유틸 (다른 레이어 import 금지 — fsd-core 표 참고)
 ```
 
@@ -44,4 +43,4 @@ src/
 ## 이 문서에 이어서 쓸 수 있는 것
 
 - 라우팅·코드 스플리팅 요약 (`App.tsx` ↔ `pages/*/index`)
-- 오프라인·온라인 경계(`OnlineBoundary`)와 데이터 저장소(IndexedDB) 관계 한 페이지 다이어그램
+- 데이터 저장소(IndexedDB)와 주요 사용자 플로우 관계 한 페이지 다이어그램

@@ -57,7 +57,7 @@ npm run verify       # 린트·포맷·타입·빌드·FSD (PR 전 권장)
 ```
 src/
 ├── app/       # shell (AppShell, TopBar), providers
-├── pages/     # dashboard, clean, cleaning, history, settings, privacy, licenses, offline
+├── pages/     # dashboard, clean, cleaning, history, settings, privacy, licenses
 ├── shared/    # shared UI
 ├── App.tsx
 └── main.tsx
