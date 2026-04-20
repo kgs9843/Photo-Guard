@@ -10,5 +10,5 @@ alwaysApply: true
 - UI는 **`src/index.css`의 `@theme` 토큰을 사용**합니다.
 - **`AGENTS.md`:** 사용자가 **`AGENTS.md` / `@AGENTS.md` / 에이전트 지침** 등으로 **명시적으로 언급한 경우** 해당 파일을 읽고, 워크플로(worktree·`npm run verify`·PR 게이트 등)를 **따른다.** **언급이 없으면** `AGENTS.md`를 열거나 인용하지 않고, 그 안의 워크플로를 **임의로 적용하지 않는다.**
 - **`exec-plan`(실행 계획):** 사용자가 **`docs/exec-plans/active/exec-plan-*.md`** 또는 워크트리 **`EXEC_PLAN.md`**를 **`@…`로 첨부하거나 경로로 명시한 경우**, 그 문서를 **해당 작업의 SoT**로 둔다. **이미 채워진 섹션**(목표·접근법·단계·완료 기준 등)이 있으면 대화 속에서 임시로 짠 계획보다 **우선**한다. 사용자가 해당 slug의 워크트리·계획이 **이미 있다**고 하면 **`exec-plan-init`을 같은 slug로 다시 실행하지 않는다.** 문서와 **충돌하는 방향**으로 바꾸려면 **사용자 확인**을 받는다.
-- **실수 교훈:** 사용자가 에이전트 실수를 지적하고 **기록**하거나 **다시 하지 말라**고 명확히 하면, `.cursor/skills/agent-lessons/SKILL.md`에 따라 **`LESSONS.md`에 한 줄** 남긴다. 비슷한 작업 전에는 그 로그를 **읽고 위반하지 않는다.**
+- **실수 교훈:** 사용자가 **기록**·**다시 하지 말라**고 하거나, 에이전트가 **스스로** 재발 방지 규칙을 남기기에 충분히 명확할 때(도구/워크플로 실수 등), `.cursor/skills/agent-lessons/SKILL.md`에 따라 **`LESSONS.md`에 한 줄** 남긴다. 비슷한 작업 전에는 그 로그를 **읽고 위반하지 않는다.**
 - **PR·코드 리뷰:** `AGENTS.md`를 따를 때는 **`npm run verify` 통과 후** 사용자 홈의 **`gstack-review`** 스킬(`~/.cursor/skills/gstack-review/SKILL.md`)이 있으면 읽고 **심층 리뷰 → 타당한 지적은 코드 반영 → `verify` 재확인 → `pr:open`**. 스킬이 없으면 생략. 리뷰·PR 뒤에 드러난 **반복 실수·빈틈**은 사용자 요청이 있거나 명백하면 **`agent-lessons/LESSONS.md`에 한 줄** 남긴다.
