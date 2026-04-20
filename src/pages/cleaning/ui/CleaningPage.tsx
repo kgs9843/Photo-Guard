@@ -87,6 +87,7 @@ const CleaningPage = () => {
     PhotoMetadata[] | null
   >(null)
   const [failedCount, setFailedCount] = useState(0)
+  const [failedDecodeCount, setFailedDecodeCount] = useState(0)
   const cleaningRunIdRef = useRef(0)
 
   useEffect(() => {
@@ -98,6 +99,7 @@ const CleaningPage = () => {
         if (runId !== cleaningRunIdRef.current) return
         setResults([])
         setDiscoveredMetas([])
+        setFailedDecodeCount(0)
         setProgress(progressFrom(0, 0, copy.progress))
         return
       }
@@ -106,12 +108,14 @@ const CleaningPage = () => {
       const collectedMetas: PhotoMetadata[] = []
       let done = 0
       let failed = 0
+      let failedDecode = 0
       let historyWrites = 0
       const outputMime = exportFormatMime(getExportFormat())
 
       setResults(null)
       setDiscoveredMetas(null)
       setFailedCount(0)
+      setFailedDecodeCount(0)
       setProgress(progressFrom(0, photos.length, copy.progress))
 
       for (const photo of photos) {
@@ -123,11 +127,12 @@ const CleaningPage = () => {
           const { removed, lines, otherTagDetails } =
             await buildRemovalEvidence(photo.file, meta)
           if (cancelled || runId !== cleaningRunIdRef.current) return
-          const cleaned = await stripImageMetadata(photo.file, {
+          const stripResult = await stripImageMetadata(photo.file, {
             outputMime: outputMime,
           })
           if (cancelled || runId !== cleaningRunIdRef.current) return
-          if (cleaned) {
+          if (stripResult.ok) {
+            const cleaned = stripResult.item
             out.push(cleaned)
             try {
               await putCleanedRecord({
@@ -149,6 +154,9 @@ const CleaningPage = () => {
             }
           } else {
             failed += 1
+            if (stripResult.code === 'decode_failed') {
+              failedDecode += 1
+            }
           }
         } catch {
           failed += 1
@@ -156,6 +164,7 @@ const CleaningPage = () => {
           done += 1
           if (!cancelled && runId === cleaningRunIdRef.current) {
             setFailedCount(failed)
+            setFailedDecodeCount(failedDecode)
             setProgress(progressFrom(done, photos.length, copy.progress))
           }
         }
@@ -283,9 +292,14 @@ const CleaningPage = () => {
               {subline}
             </p>
             {failedCount > 0 ? (
-              <p className="text-tertiary text-sm font-semibold">
-                {copy.failedLine(failedCount)}
-              </p>
+              <div className="text-tertiary space-y-1 text-sm font-semibold">
+                <p>{copy.failedLine(failedCount)}</p>
+                {failedDecodeCount > 0 ? (
+                  <p className="text-on-surface-variant/80 font-medium">
+                    {copy.failedDecodeHint(failedDecodeCount)}
+                  </p>
+                ) : null}
+              </div>
             ) : null}
           </div>
 
