@@ -15,25 +15,13 @@ import {
   exportFormatMime,
   getExportFormat,
 } from '@/pages/settings/model/exportFormatStorage'
+import {
+  canUseSystemShare,
+  saveBlobAsFile,
+  shareBlobs,
+} from '@/shared/lib/blobSaveShare'
 import { useLocale } from '@/shared/lib/useLocale'
 import GradientButton from '@/shared/ui/GradientButton'
-
-const downloadBlob = (blob: Blob, filename: string) => {
-  const url = URL.createObjectURL(blob)
-  try {
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.rel = 'noopener'
-    a.click()
-  } finally {
-    try {
-      URL.revokeObjectURL(url)
-    } catch {
-      /* ignore */
-    }
-  }
-}
 
 const HistoryDetailPage = () => {
   const { recordId } = useParams<{ recordId: string }>()
@@ -111,7 +99,7 @@ const HistoryDetailPage = () => {
         window.alert(detailCopy.saveFailed)
         return
       }
-      downloadBlob(out.item.blob, out.item.name)
+      await saveBlobAsFile(out.item.blob, out.item.name)
     } catch {
       window.alert(detailCopy.saveFailed)
     }
@@ -119,31 +107,38 @@ const HistoryDetailPage = () => {
 
   const handleShare = useCallback(async () => {
     if (!record) return
-    if (
-      typeof navigator === 'undefined' ||
-      typeof navigator.share !== 'function'
-    ) {
+    if (!canUseSystemShare()) {
       window.alert(detailCopy.shareUnsupported)
       return
     }
     try {
       const blob = sourceBlobRef.current
       if (blob) {
-        const file = new File([blob], record.fileName, {
-          type: blob.type || record.outputMime || 'image/jpeg',
-        })
-        const filesPayload = { files: [file] }
-        if (navigator.canShare?.(filesPayload)) {
-          await navigator.share({ ...filesPayload, title: record.fileName })
-          return
-        }
+        await shareBlobs(
+          [
+            {
+              blob,
+              filename: record.fileName,
+            },
+          ],
+          {
+            title: record.fileName,
+            text: detailCopy.statusBody,
+          }
+        )
+        return
       }
 
-      await navigator.share({
-        title: record.fileName,
-        text: detailCopy.statusBody,
-        url: record.imageSrc,
-      })
+      if (
+        typeof navigator !== 'undefined' &&
+        typeof navigator.share === 'function'
+      ) {
+        await navigator.share({
+          title: record.fileName,
+          text: detailCopy.statusBody,
+          url: record.imageSrc,
+        })
+      }
     } catch (e) {
       if ((e as Error)?.name === 'AbortError') return
       window.alert(detailCopy.shareFailed)

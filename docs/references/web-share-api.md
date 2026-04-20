@@ -7,3 +7,4 @@ Notes:
 
 - `navigator.share()` availability depends on browser/device context (typically mobile).
 - File sharing requires secure context (HTTPS) and support for `files` in the share payload.
+- In React Native WebView, prefer the `postMessage` bridge: [`react-native-webview-bridge.md`](react-native-webview-bridge.md).

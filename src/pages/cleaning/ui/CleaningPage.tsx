@@ -16,6 +16,11 @@ import {
   exportFormatMime,
   getExportFormat,
 } from '@/pages/settings/model/exportFormatStorage'
+import {
+  canUseSystemShare,
+  saveBlobAsFile,
+  shareBlobs,
+} from '@/shared/lib/blobSaveShare'
 import { useLocale } from '@/shared/lib/useLocale'
 import GradientButton from '@/shared/ui/GradientButton'
 
@@ -47,24 +52,6 @@ const progressFrom = (
     percent: clamp(percent, 0, 100),
     statusText:
       done >= total ? progressCopy.statusDone : progressCopy.statusRunning,
-  }
-}
-
-const downloadBlob = (blob: Blob, filename: string) => {
-  // Official reference: https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL
-  const url = URL.createObjectURL(blob)
-  try {
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.rel = 'noopener'
-    a.click()
-  } finally {
-    try {
-      URL.revokeObjectURL(url)
-    } catch {
-      // ignore
-    }
   }
 }
 
@@ -187,10 +174,7 @@ const CleaningPage = () => {
 
   const isDone = progress.done >= progress.total && results !== null
   const canSave = isDone && results.length > 0
-  const canShare =
-    canSave &&
-    typeof navigator !== 'undefined' &&
-    typeof navigator.share === 'function'
+  const canShare = canSave && canUseSystemShare()
 
   const circle = useMemo(() => {
     const r = 48
@@ -342,13 +326,15 @@ const CleaningPage = () => {
               disabled={!canSave}
               onClick={() => {
                 if (!results) return
-                for (const item of results) {
-                  try {
-                    downloadBlob(item.blob, item.name)
-                  } catch {
-                    // ignore
+                void (async () => {
+                  for (const item of results) {
+                    try {
+                      await saveBlobAsFile(item.blob, item.name)
+                    } catch {
+                      // ignore
+                    }
                   }
-                }
+                })()
               }}
               className={canSave ? '' : 'from-[#a1a1a1] to-[#bdbdbd]'}
             >
@@ -363,14 +349,13 @@ const CleaningPage = () => {
                 if (!canShare) return
 
                 try {
-                  const files = results.map(
-                    r => new File([r.blob], r.name, { type: r.type })
+                  await shareBlobs(
+                    results.map(r => ({
+                      blob: r.blob,
+                      filename: r.name,
+                    })),
+                    { title: copy.shareTitle, text: copy.shareText }
                   )
-                  await navigator.share({
-                    title: copy.shareTitle,
-                    text: copy.shareText,
-                    files,
-                  })
                 } catch {
                   // ignore
                 }
