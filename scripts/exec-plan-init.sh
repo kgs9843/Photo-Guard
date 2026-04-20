@@ -4,6 +4,7 @@ set -euo pipefail
 # 실행 계획 + worktree + 포트 + 로그 디렉터리 + active 문서 한 번에 생성
 # 사용: bash scripts/exec-plan-init.sh <slug>
 # 선택 환경변수: BASE_BRANCH (기본 main), PHOTO_GUARD_WORKTREE_ROOT (기본: 저장소 상위 photo-guard-worktrees)
+# <!-- 채팅 : @AGENTS.md @docs/exec-plans/active/exec-plan-foo.md -->
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"

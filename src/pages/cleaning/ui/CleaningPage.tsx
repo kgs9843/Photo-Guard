@@ -1,11 +1,4 @@
-import {
-  ArrowLeft,
-  Check,
-  LoaderCircle,
-  MapPinOff,
-  ShieldCheck,
-  Smartphone,
-} from 'lucide-react'
+import { ArrowLeft, Check, LoaderCircle, ShieldCheck } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
@@ -326,34 +319,6 @@ const CleaningPage = () => {
                   />
                 </div>
               </div>
-            ) : !isDone ? (
-              <>
-                <div className="border-outline-variant/5 bg-surface-container-low rounded-[1.5rem] border p-5">
-                  <MapPinOff
-                    className="text-tertiary-container/50 mb-3 size-6"
-                    aria-hidden
-                  />
-                  <p className="text-on-surface-variant/40 text-[10px] font-bold tracking-tighter uppercase">
-                    {copy.cardGpsLabel}
-                  </p>
-                  <p className="text-on-surface font-extrabold">
-                    {copy.cardValueWaiting}
-                  </p>
-                </div>
-
-                <div className="border-outline-variant/5 bg-surface-container-low rounded-[1.5rem] border p-5">
-                  <Smartphone
-                    className="text-secondary/50 mb-3 size-6"
-                    aria-hidden
-                  />
-                  <p className="text-on-surface-variant/40 text-[10px] font-bold tracking-tighter uppercase">
-                    {copy.cardDeviceLabel}
-                  </p>
-                  <p className="text-on-surface font-extrabold">
-                    {copy.cardValuePending}
-                  </p>
-                </div>
-              </>
             ) : null}
           </div>
 

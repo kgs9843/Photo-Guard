@@ -16,8 +16,7 @@ const root = path.resolve(__dirname, '..')
 process.chdir(root)
 
 const precommitMode =
-  process.argv.includes('--precommit') ||
-  process.env.VERIFY_PRECOMMIT === '1'
+  process.argv.includes('--precommit') || process.env.VERIFY_PRECOMMIT === '1'
 
 const sh = cmd => {
   console.log(`\n== ${cmd} ==`)
