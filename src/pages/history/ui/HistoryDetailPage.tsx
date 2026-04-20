@@ -107,11 +107,11 @@ const HistoryDetailPage = () => {
       const format = getExportFormat()
       const mime = exportFormatMime(format)
       const out = await reencodeBlobToMime(blob, mime, record.fileName)
-      if (!out) {
+      if (!out.ok) {
         window.alert(detailCopy.saveFailed)
         return
       }
-      downloadBlob(out.blob, out.name)
+      downloadBlob(out.item.blob, out.item.name)
     } catch {
       window.alert(detailCopy.saveFailed)
     }

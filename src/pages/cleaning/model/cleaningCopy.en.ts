@@ -16,6 +16,8 @@ export const cleaningCopyEn = {
     `Processing ${done} of ${total} photo(s)…`,
   sublineNoPhotos: 'No photos selected.',
   failedLine: (n: number) => `Could not process ${n} file(s).`,
+  failedDecodeHint: (n: number) =>
+    `${n} may have failed to decode (resolution or format). Try different files.`,
   statusCardLabel: 'Status',
   removedSectionTitle: 'Removed metadata',
   statusDataDone: 'Data protection complete',

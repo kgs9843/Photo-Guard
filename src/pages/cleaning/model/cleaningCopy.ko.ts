@@ -16,6 +16,8 @@ export const cleaningCopyKo = {
     `${total}장의 사진 중 ${done}장 처리 중...`,
   sublineNoPhotos: '선택된 사진이 없습니다.',
   failedLine: (n: number) => `${n}장을 처리하지 못했습니다.`,
+  failedDecodeHint: (n: number) =>
+    `그중 ${n}장은 해상도·형식 때문에 디코딩하지 못했을 수 있습니다. 다른 파일로 시도해 보세요.`,
   statusCardLabel: '상태',
   removedSectionTitle: '제거된 메타데이터',
   statusDataDone: '데이터 보호 완료',

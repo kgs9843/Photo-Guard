@@ -55,7 +55,10 @@ export const extractPhotoMetadata = async (
       exposureTime: parsed?.ExposureTime,
       iso: parsed?.ISO,
     }
-  } catch {
+  } catch (e) {
+    if (import.meta.env.DEV) {
+      console.warn('[extractPhotoMetadata]', photo.name, e)
+    }
     return {
       fileName: photo.name,
       fileType: photo.type,
