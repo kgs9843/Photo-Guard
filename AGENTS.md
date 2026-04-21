@@ -10,15 +10,16 @@
 
 ## Cursor 규칙·스킬 (자동 적용 요약)
 
-| 구분                     | 경로                                                                                                   |
-| ------------------------ | ------------------------------------------------------------------------------------------------------ |
-| 제약                     | `.cursor/rules/project-constraints.mdc`                                                                |
-| FSD                      | `.cursor/rules/fsd-core.mdc`                                                                           |
-| 디자인                   | `.cursor/rules/design.mdc` → [`docs/design/design-system.md`](docs/design/design-system.md)            |
-| 슬라이스 스캐폴드        | `.cursor/skills/fsd-slices/SKILL.md`                                                                   |
-| 에이전트 실수 교훈       | `.cursor/skills/agent-lessons/SKILL.md` · 로그 [`LESSONS.md`](.cursor/skills/agent-lessons/LESSONS.md) |
-| PR 전 심층 리뷰 (gstack) | 사용자 홈 `~/.cursor/skills/gstack-review/SKILL.md` (미설치면 생략) — [절 4](#4-커밋--pr--머지--정리)  |
-| Playwright MCP 스크린샷  | `.cursor/skills/playwright-mcp-screenshots/SKILL.md` (PR·문서용 UI 캡처, MCP 연결 시)                  |
+| 구분                        | 경로                                                                                                   |
+| --------------------------- | ------------------------------------------------------------------------------------------------------ |
+| 제약                        | `.cursor/rules/project-constraints.mdc`                                                                |
+| FSD                         | `.cursor/rules/fsd-core.mdc`                                                                           |
+| 디자인                      | `.cursor/rules/design.mdc` → [`docs/design/design-system.md`](docs/design/design-system.md)            |
+| 슬라이스 스캐폴드           | `.cursor/skills/fsd-slices/SKILL.md`                                                                   |
+| 에이전트 실수 교훈          | `.cursor/skills/agent-lessons/SKILL.md` · 로그 [`LESSONS.md`](.cursor/skills/agent-lessons/LESSONS.md) |
+| PR 전 심층 리뷰 (gstack)    | 사용자 홈 `~/.cursor/skills/gstack-review/SKILL.md` (미설치면 생략) — [절 4](#4-커밋--pr--머지--정리)  |
+| Playwright MCP 스크린샷     | `.cursor/skills/playwright-mcp-screenshots/SKILL.md` (PR·문서용 UI 캡처, MCP 연결 시)                  |
+| Playwright E2E (`test:e2e`) | 루트 `playwright.config.ts`, 스펙 `e2e/*.spec.ts` — [Playwright E2E](#playwright-e2e-and-screenshots)  |
 
 ---
 
@@ -40,6 +41,16 @@
 | [`docs/product/README.md`](docs/product/README.md)                                   | 제품 한 줄·여정·용어                                                                                                          |
 | [`docs/references/README.md`](docs/references/README.md)                             | 외부 근거·참고 고정                                                                                                           |
 | [`scripts/README.md`](scripts/README.md)                                             | 스크립트 표 (`exec-plan-init`, `verify`, Husky 보조 등)                                                                       |
+
+---
+
+## Playwright E2E and screenshots
+
+- **명령:** `npm run test:e2e` (내부: `playwright test`). 최초 환경: `npx playwright install chromium`.
+- **구조:** **`playwright.config.ts`** 한 파일에 서버·브라우저·`baseURL` 등을 둔다. 캡처·경량 E2E는 **`e2e/<이름>.spec.ts`** 만 추가한다. **플로우마다 `package.json`에 `screenshots:…` 같은 스크립트를 늘리지 않는다.**
+- **서버:** `playwright.config.ts`의 `webServer`가 **E2E 전용 포트**(기본 `5237`, `PLAYWRIGHT_E2E_PORT`로 변경)에서 Vite를 띄운다. 손으로 `npm run dev:5231`을 쓰는 경우와 포트가 겹치지 않게 한다. 로컬에서 해당 포트에 이미 서버가 떠 있으면 `reuseExistingServer`로 재사용한다.
+- **일부만 실행:** `npx playwright test e2e/특정.spec.ts`
+- **MCP:** Cursor **Playwright MCP**는 스킬 **`.cursor/skills/playwright-mcp-screenshots/SKILL.md`** 를 따른다. 레포에서는 CLI `test:e2e`와 **목적이 겹치면 한쪽으로 통일**해 문서·PR 절차가 갈라지지 않게 한다.
 
 ---
 
