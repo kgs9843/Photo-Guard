@@ -111,6 +111,7 @@ const ClearHistoryConfirmModal = ({
           <div className="flex w-full flex-col gap-3">
             <button
               type="button"
+              data-testid="clear-history-confirm"
               className="bg-tertiary text-on-tertiary w-full rounded-xl px-6 py-4 text-[1rem] font-bold shadow-sm transition-all duration-200 active:scale-[0.98]"
               onClick={handleConfirm}
             >

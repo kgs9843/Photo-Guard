@@ -12,8 +12,11 @@ import type { ExportFormatKey } from '@/pages/settings/model/settingsCopy'
 import { getSettingsCopy } from '@/pages/settings/model/settingsCopy'
 import ClearHistoryConfirmModal from '@/pages/settings/ui/ClearHistoryConfirmModal'
 import { useLocale } from '@/shared/lib/useLocale'
+import Toast, { type ToastTone } from '@/shared/ui/Toast'
 
 const APP_VERSION = '1.0.0'
+
+type ToastState = { message: string; tone: ToastTone } | null
 
 const SettingsPage = () => {
   const navigate = useNavigate()
@@ -21,25 +24,30 @@ const SettingsPage = () => {
   const copy = useMemo(() => getSettingsCopy(locale), [locale])
   const [format, setFormat] = useState<ExportFormatKey>(() => getExportFormat())
   const [clearHistoryModalOpen, setClearHistoryModalOpen] = useState(false)
+  const [toast, setToast] = useState<ToastState>(null)
+
+  const showToast = useCallback((message: string, tone: ToastTone) => {
+    setToast({ message, tone })
+  }, [])
 
   const runClearHistory = useCallback(async () => {
     try {
       const removed = await clearPhotoGuardLocalHistory()
       if (removed < 0) {
-        window.alert(copy.clearHistoryBlock.failed)
+        showToast(copy.clearHistoryBlock.failed, 'error')
         return
       }
       if (removed === 0) {
-        window.alert(copy.clearHistoryBlock.empty)
+        showToast(copy.clearHistoryBlock.empty, 'info')
         return
       }
 
       dispatchHistoryUpdated()
-      window.alert(copy.clearHistoryBlock.done)
+      showToast(copy.clearHistoryBlock.done, 'success')
     } catch {
-      window.alert(copy.clearHistoryBlock.failed)
+      showToast(copy.clearHistoryBlock.failed, 'error')
     }
-  }, [copy.clearHistoryBlock])
+  }, [copy.clearHistoryBlock, showToast])
 
   const handleConfirmClearHistory = useCallback(() => {
     setClearHistoryModalOpen(false)
@@ -48,6 +56,15 @@ const SettingsPage = () => {
 
   return (
     <div className="space-y-8 pb-12">
+      <Toast
+        open={toast !== null}
+        message={toast?.message ?? ''}
+        tone={toast?.tone ?? 'info'}
+        dismissAriaLabel={copy.toastDismissAria}
+        onDismiss={() => {
+          setToast(null)
+        }}
+      />
       <ClearHistoryConfirmModal
         open={clearHistoryModalOpen}
         onClose={() => {
@@ -165,6 +182,7 @@ const SettingsPage = () => {
 
         <button
           type="button"
+          data-testid="settings-clear-history"
           onClick={() => {
             setClearHistoryModalOpen(true)
           }}

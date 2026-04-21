@@ -6,6 +6,7 @@ export const settingsCopyKo = {
   settingsSections: {
     appInfo: '앱 정보',
   },
+  toastDismissAria: '알림 닫기',
   languageBlock: {
     title: '언어',
     description: '앱 화면에 표시할 언어입니다.',
