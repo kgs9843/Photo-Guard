@@ -12,6 +12,7 @@ description: >-
 
 ## When to apply
 
+- 레포에서 **`npm run test:e2e`**(`e2e/*.spec.ts`)로 같은 PNG를 재현할 수 있으면 **CLI를 우선**하고, MCP는 보조·수동 시나리오에 쓴다. ([`AGENTS.md`](../../../AGENTS.md) — Playwright E2E)
 - PR 본문 [`docs/workflows/pull-request-template.md`](../../../docs/workflows/pull-request-template.md)의 **스크린샷** 섹션을 채우거나, 변경 UI를 **실제 브라우저**로 보여줄 때.
 - 사용자가 **Playwright MCP**, **브라우저 스크린샷**, **MCP로 찍어** 등을 말할 때.
 - 문서·리뷰용으로 **레포 안에 PNG**를 남겨야 할 때 (`docs/references/…` 등).

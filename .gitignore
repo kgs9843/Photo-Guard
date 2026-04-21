@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Playwright
+test-results
+playwright-report
+
 # PR 본문(템플릿 채운 뒤 pr-open.sh에만 넘김; 커밋하지 않음)
 pr-body.local.md
 

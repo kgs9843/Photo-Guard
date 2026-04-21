@@ -8,7 +8,7 @@ import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'e2e', 'playwright.config.ts']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
