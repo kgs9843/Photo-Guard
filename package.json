@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:5231": "vite --host 127.0.0.1 --port 5231",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -15,6 +16,7 @@
     "verify:precommit": "node scripts/verify-task.mjs --precommit",
     "exec-plan-init": "node scripts/exec-plan-init.mjs",
     "pr:open": "node scripts/pr-open.mjs",
+    "screenshots:settings-toast": "node scripts/capture-settings-toast-screenshots.mjs",
     "preview": "vite preview",
     "prepare": "husky"
   },
@@ -55,6 +57,7 @@
     "lint-staged": "^16.2.7",
     "postcss": "^8.5.6",
     "prettier": "^3.7.4",
+    "playwright": "^1.57.0",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",

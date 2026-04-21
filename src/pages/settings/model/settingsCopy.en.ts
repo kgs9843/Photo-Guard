@@ -6,6 +6,7 @@ export const settingsCopyEn = {
   settingsSections: {
     appInfo: 'App info',
   },
+  toastDismissAria: 'Dismiss notification',
   languageBlock: {
     title: 'Language',
     description: 'Text shown across the app.',
