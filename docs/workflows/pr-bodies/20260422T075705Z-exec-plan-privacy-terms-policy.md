@@ -35,8 +35,13 @@ pr_url: 'https://github.com/kgs9843/Photo-Guard/pull/8'
 
 ## 📸 스크린샷
 
-- KO: `https://github.com/kgs9843/Photo-Guard/raw/exec-plan/privacy-terms-policy/docs/references/screenshots/privacy-terms-policy/01-privacy-ko.png`
-- EN: `https://github.com/kgs9843/Photo-Guard/raw/exec-plan/privacy-terms-policy/docs/references/screenshots/privacy-terms-policy/02-privacy-en.png`
+- KO
+
+![privacy page (ko)](https://raw.githubusercontent.com/kgs9843/Photo-Guard/exec-plan/privacy-terms-policy/docs/references/screenshots/privacy-terms-policy/01-privacy-ko.png)
+
+- EN
+
+![privacy page (en)](https://raw.githubusercontent.com/kgs9843/Photo-Guard/exec-plan/privacy-terms-policy/docs/references/screenshots/privacy-terms-policy/02-privacy-en.png)
 
 ## 📝 추가 정보
 
