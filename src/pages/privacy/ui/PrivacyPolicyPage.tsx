@@ -1,4 +1,11 @@
-import { ArrowLeft, BadgeInfo, Clock, Target } from 'lucide-react'
+import {
+  ArrowLeft,
+  BadgeInfo,
+  Clock,
+  FileText,
+  Shield,
+  Target,
+} from 'lucide-react'
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -43,6 +50,52 @@ const PrivacyPolicyPage = () => {
             {privacy.heroLead}
           </p>
         </div>
+
+        <section className="bg-surface-container-low rounded-xl p-6 md:p-8">
+          <h3 className="text-on-surface mb-4 flex items-center gap-2 text-lg font-medium">
+            <FileText
+              className="text-primary size-6 shrink-0"
+              aria-hidden
+              strokeWidth={2}
+            />
+            {privacy.terms.title}
+          </h3>
+          <p className="text-on-surface-variant mb-6 leading-relaxed">
+            {privacy.terms.lead}
+          </p>
+
+          <div className="space-y-4">
+            {privacy.terms.sections.map(section => (
+              <div
+                key={section.title}
+                className="bg-surface-container-lowest rounded-lg p-4"
+              >
+                <h4 className="text-on-surface mb-2 font-medium">
+                  {section.title}
+                </h4>
+                <div className="text-on-surface-variant space-y-2 text-sm leading-relaxed">
+                  {section.bodyLines.map(line => (
+                    <p key={line}>{line}</p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-surface-container-low rounded-xl p-6 md:p-8">
+          <h3 className="text-on-surface mb-4 flex items-center gap-2 text-lg font-medium">
+            <Shield
+              className="text-primary size-6 shrink-0"
+              aria-hidden
+              strokeWidth={2}
+            />
+            {privacy.policy.title}
+          </h3>
+          <p className="text-on-surface-variant leading-relaxed">
+            {privacy.policy.lead}
+          </p>
+        </section>
 
         <section className="bg-surface-container-low rounded-xl p-6 md:p-8">
           <h3 className="text-on-surface mb-4 flex items-center gap-2 text-lg font-medium">
@@ -93,6 +146,22 @@ const PrivacyPolicyPage = () => {
                   {card.body}
                 </p>
               </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="bg-surface-container-low rounded-xl p-6 md:p-8">
+          <h3 className="text-on-surface mb-4 flex items-center gap-2 text-lg font-medium">
+            <Shield
+              className="text-primary size-6 shrink-0"
+              aria-hidden
+              strokeWidth={2}
+            />
+            {privacy.sharing.title}
+          </h3>
+          <div className="text-on-surface-variant space-y-2 leading-relaxed">
+            {privacy.sharing.bodyLines.map(line => (
+              <p key={line}>{line}</p>
             ))}
           </div>
         </section>

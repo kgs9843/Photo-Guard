@@ -1,47 +1,87 @@
 export const privacyCopyEn = {
-  topBarTitle: 'Privacy policy',
-  heroTitle: 'Photo Guard privacy policy',
+  topBarTitle: 'Terms & privacy',
+  heroTitle: 'Terms of service and privacy policy',
   heroLead:
-    'Photo Guard ("we") respects your privacy. This policy explains what information may be processed, how it is used, and the measures we take to protect it while you use the web app.',
+    'Photo Guard removes location/time/device hints (EXIF-like metadata) by re-encoding selected images inside your browser. This document is based on the current implementation (on-device processing and local-only storage).',
+  terms: {
+    title: 'Terms of service',
+    lead: 'These terms describe the rules, responsibilities, and limitations for using the Photo Guard web app (the “Service”).',
+    sections: [
+      {
+        title: 'How the Service works',
+        bodyLines: [
+          'The Service decodes selected images in the browser, draws them to a canvas, and exports a cleaned JPEG/PNG.',
+          'Processing is performed on your device. The Service does not upload your original images to our servers.',
+        ],
+      },
+      {
+        title: 'Your responsibilities',
+        bodyLines: [
+          'You should review the output before sharing or uploading it elsewhere.',
+          'You must comply with applicable laws and respect third-party rights (copyright, portrait rights, etc.).',
+        ],
+      },
+      {
+        title: 'Limitations and disclaimer',
+        bodyLines: [
+          'Re-encoding reduces embedded metadata, but it cannot guarantee 100% removal for every file/browser/format combination.',
+          'The Service is provided “as is” and may fail or produce degraded results depending on your environment.',
+        ],
+      },
+      {
+        title: 'Changes',
+        bodyLines: [
+          'We may update these terms and provide notice within the Service when appropriate.',
+        ],
+      },
+    ],
+  },
+  policy: {
+    title: 'Privacy policy',
+    lead: 'Photo Guard works without account sign-up and does not upload original images to a server. Some information may be stored locally in your browser to provide core features.',
+  },
   collection: {
-    title: 'Information we may process',
-    lead: 'Depending on how you use the service, the following categories may apply:',
+    title: 'What is stored locally (current implementation)',
+    lead: 'The Service may store the following data in your browser storage:',
     items: [
       {
-        label: 'Device:',
-        text: 'Device identifiers where the browser exposes them, OS version, and basic app usage signals.',
+        label: 'Cleaning history (IndexedDB):',
+        text: 'Cleaned image blobs and metadata such as filename, timestamps, file size, and removal summaries (e.g., GPS/device/capture time).',
       },
       {
-        label: 'Optional:',
-        text: 'Contact details you voluntarily provide for support (e.g., email).',
-      },
-      {
-        label: 'Automatic:',
-        text: 'Service logs such as access timestamps and coarse network information when required for security.',
+        label: 'Preferences (localStorage):',
+        text: 'Export format (JPG/PNG) and language preference (ko/en).',
       },
     ],
   },
   purpose: {
     title: 'Purposes of processing',
-    lead: 'We use the information described above for the following purposes:',
+    lead: 'Local storage is used for the following purposes:',
     cards: [
       {
         title: 'Provide the service',
-        body: 'Deliver features, keep sessions stable, and improve reliability and performance.',
+        body: 'Show your cleaning history and allow re-download/share of cleaned outputs.',
       },
       {
-        title: 'Safety and abuse prevention',
-        body: 'Detect misuse, protect accounts and infrastructure, and comply with applicable law.',
+        title: 'Remember preferences',
+        body: 'Keep your export format and language selection across visits.',
       },
+    ],
+  },
+  sharing: {
+    title: 'Sharing and transfers',
+    bodyLines: [
+      'The Service does not upload your original images or cleaned outputs to our servers by default.',
+      'If you use the system “Share” feature, your browser/OS (or an app hosting the webview) may transfer the file to the destination you choose.',
     ],
   },
   retention: {
     title: 'Retention',
-    body: 'We retain information only as long as needed for the purposes above or as required by law. When retention is no longer necessary, we delete or anonymize data without undue delay.',
+    body: 'Cleaning history may persist locally until you delete it.',
     boxLines: [
-      'Example retention: service access logs and related technical records',
-      'Typical period: up to 3 months where telecommunications rules apply (illustrative).',
+      'Delete from the app: Settings > “Clear history” removes cleaning history stored in IndexedDB.',
+      'Delete from the browser: clearing site data may also remove localStorage preferences.',
     ],
   },
-  effectiveDate: 'This policy is effective as of April 20, 2026.',
+  effectiveDate: 'Effective date: April 22, 2026.',
 } as const
