@@ -11,7 +11,8 @@
 npm run test:e2e:store-shots
 ```
 
-(전용 포트에서 Vite가 뜬 뒤 같은 설정으로 페이지를 연 다음 `docs/references/screenshot/*.png`를 덮어씁니다.)
+(전용 포트에서 Vite가 뜬 뒤 같은 설정으로 페이지를 연 다음 `docs/references/screenshot/*.png`를 덮어씁니다.  
+`e2e/store-screenshots.spec.ts`에서 화면별로 콘텐츠·IDB 로드가 끝난 뒤 **약 0.9초** 더 두고 캡처해 로딩·스피너 잔상을 피합니다.)
 
 ## GitHub에서 이미지가 깨질 때
 
