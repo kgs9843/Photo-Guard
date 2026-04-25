@@ -16,7 +16,8 @@
     "verify:precommit": "node scripts/verify-task.mjs --precommit",
     "exec-plan-init": "node scripts/exec-plan-init.mjs",
     "pr:open": "node scripts/pr-open.mjs",
-    "test:e2e": "playwright test",
+    "test:e2e": "node ./node_modules/@playwright/test/cli.js test --grep-invert @store-shots",
+    "test:e2e:store-shots": "node ./node_modules/@playwright/test/cli.js test --grep @store-shots",
     "preview": "vite preview",
     "prepare": "husky"
   },

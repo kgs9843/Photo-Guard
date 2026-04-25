@@ -1,7 +1,17 @@
-# UI 스크린샷 (Playwright MCP)
+# UI 스크린샷 (Play Store 프레임)
 
-로컬 개발 서버(`npm run dev:5231`, `http://127.0.0.1:5231`)에서 **Playwright MCP**로 캡처한 화면입니다.  
-갱신일: 2026-04-25
+**Playwright E2E**와 `playwright.config.ts`의 chromium 프로젝트 설정으로 캡처합니다.
+
+- 뷰포트: **390×844**
+- **deviceScaleFactor: 2** (레티나에 가까운 밀도)
+
+갱신:
+
+```bash
+npm run test:e2e:store-shots
+```
+
+(전용 포트에서 Vite가 뜬 뒤 같은 설정으로 페이지를 연 다음 `docs/references/screenshot/*.png`를 덮어씁니다.)
 
 ## GitHub에서 이미지가 깨질 때
 
