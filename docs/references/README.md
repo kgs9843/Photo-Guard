@@ -2,6 +2,11 @@
 
 외부 문서(Context7 등)에서 확인한 내용을 **레포 안에 짧게 고정**합니다.
 
+## UI 스크린샷
+
+- 화면별 캡처·GitHub에서 이미지가 뜨는 URL 패턴: [`screenshot/README.md`](screenshot/README.md)
+- (기존) Playwright CLI로 남긴 예시: [`screenshots/`](screenshots/)
+
 ## 원칙
 
 - “링크만” 남기지 말고 **결론 3~7줄**을 같이 남깁니다.
